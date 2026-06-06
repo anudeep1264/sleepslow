@@ -4,10 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#000000" />
-<title>Anti-Anxiety Sleep Pacemaker</title>
+<title>Hypnotic Pacemaker · 5 Minute Sleep</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-  html,body{width:100%;height:100%;background:#000;color:#555;
+  html,body{width:100%;height:100%;background:#000;color:#4a4a4a;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",system-ui,sans-serif;
     overflow:hidden;overscroll-behavior:none;touch-action:none;-webkit-font-smoothing:antialiased;font-weight:300}
   #stage{position:fixed;inset:0;background:#000}
@@ -19,19 +19,19 @@
   .brand{position:absolute;top:9vh;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.55em;
     text-transform:uppercase;color:#3a3a3a;font-weight:300}
   .brand b{color:#6a6a6a;font-weight:400}
-  #enterBtn{position:relative;width:240px;height:240px;border-radius:50%;border:1px solid rgba(120,130,140,.18);
+  #enterBtn{position:relative;width:240px;height:240px;border-radius:50%;border:1px solid rgba(120,130,140,.16);
     background:radial-gradient(circle at 50% 50%,
-      rgba(45,55,70,.55) 0%,
-      rgba(35,45,55,.35) 35%,
-      rgba(45,34,25,.18) 65%,
-      rgba(0,0,0,0) 80%);
+      rgba(26,35,50,.65) 0%,
+      rgba(44,53,49,.4) 45%,
+      rgba(20,24,28,.15) 75%,
+      rgba(0,0,0,0) 90%);
     color:#7a7a7a;font-size:10px;letter-spacing:.5em;font-weight:300;cursor:pointer;outline:none;
-    box-shadow:0 0 80px 10px rgba(30,40,50,.35), inset 0 0 60px rgba(40,50,60,.25);
+    box-shadow:0 0 80px 10px rgba(26,35,50,.35), inset 0 0 60px rgba(44,53,49,.22);
     animation:landPulse 7s ease-in-out infinite;transition:transform .8s ease,opacity 1s ease}
   #enterBtn:active{transform:scale(.97)}
   @keyframes landPulse{
-    0%,100%{box-shadow:0 0 80px 10px rgba(30,40,50,.3), inset 0 0 60px rgba(40,50,60,.22);transform:scale(1)}
-    50%{box-shadow:0 0 120px 20px rgba(45,55,70,.45), inset 0 0 80px rgba(50,60,72,.32);transform:scale(1.03)}
+    0%,100%{box-shadow:0 0 80px 10px rgba(26,35,50,.3), inset 0 0 60px rgba(44,53,49,.2);transform:scale(1)}
+    50%{box-shadow:0 0 130px 20px rgba(26,35,50,.5), inset 0 0 80px rgba(44,53,49,.3);transform:scale(1.03)}
   }
   .disclaimer{position:absolute;bottom:7vh;left:24px;right:24px;text-align:center;font-size:9.5px;line-height:1.85;
     color:#2e2e2e;letter-spacing:.12em;max-width:340px;margin:0 auto}
@@ -40,45 +40,22 @@
   #session{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 2.4s ease;z-index:5}
   #session.on{opacity:1;pointer-events:auto}
 
-  .orb-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-  .orb{
-    width:46vmin;height:46vmin;border-radius:50%;
-    background:
-      radial-gradient(circle at 38% 36%,
-        rgba(60,72,90,.85) 0%,
-        rgba(44,53,49,.7) 28%,
-        rgba(45,34,25,.55) 55%,
-        rgba(20,24,28,.25) 75%,
-        rgba(0,0,0,0) 100%);
-    filter:blur(.5px);
-    box-shadow:
-      0 0 80px 30px rgba(26,35,50,.35),
-      0 0 180px 60px rgba(44,53,49,.22),
-      0 0 280px 100px rgba(45,34,25,.12),
-      inset 0 0 80px rgba(60,72,90,.25);
-    transform:scale(.7);opacity:.55;
-    transition:transform 4s cubic-bezier(.45,.05,.55,.95), opacity 4s cubic-bezier(.45,.05,.55,.95),
-      filter 4s cubic-bezier(.45,.05,.55,.95);
-    will-change:transform,opacity
-  }
-  .orb.inhale{transform:scale(1.15);opacity:1;filter:blur(0px)}
-  .orb.hold-top{transform:scale(1.15);opacity:1;filter:blur(0px);transition-duration:4s}
-  .orb.exhale{transform:scale(.7);opacity:.55;filter:blur(.5px)}
-  .orb.hold-bot{transform:scale(.7);opacity:.55;filter:blur(.5px);transition-duration:4s}
+  canvas#viz{position:absolute;inset:0;width:100%;height:100%;display:block}
 
-  .phase{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;
-    font-size:11px;letter-spacing:.6em;text-transform:uppercase;color:#555;font-weight:300;
-    pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity 1.6s ease;
-    text-shadow:0 0 24px rgba(0,0,0,.9)}
-  .phase.show{opacity:.85}
-  .phase .label{display:block;margin-top:30vmin;font-size:10px;color:#4a4a4a}
+  .phase-text{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;
+    font-size:10.5px;letter-spacing:.6em;text-transform:uppercase;color:#555;font-weight:300;
+    pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity 2s ease;
+    text-shadow:0 0 24px rgba(0,0,0,.95)}
+  .phase-text.show{opacity:.78}
+  .phase-text .label{display:block;margin-top:34vmin;font-size:10px;color:#555}
+  .phase-text .sub{display:block;margin-top:8px;font-size:8.5px;color:#333;letter-spacing:.4em}
 
-  .timer{position:absolute;top:max(22px,env(safe-area-inset-top));left:0;right:0;text-align:center;
-    font-size:10px;letter-spacing:.45em;color:#3d3d3d;font-variant-numeric:tabular-nums;font-weight:300}
+  .timer{position:absolute;bottom:max(70px,calc(env(safe-area-inset-bottom) + 70px));left:0;right:0;text-align:center;
+    font-size:9.5px;letter-spacing:.5em;color:#333;font-variant-numeric:tabular-nums;font-weight:300}
 
-  #stopBtn{position:absolute;bottom:max(36px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
-    background:transparent;border:1px solid rgba(85,85,85,.18);color:#4a4a4a;
-    padding:11px 26px;border-radius:999px;font-size:9.5px;letter-spacing:.45em;text-transform:uppercase;
+  #stopBtn{position:absolute;bottom:max(28px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+    background:transparent;border:1px solid rgba(85,85,85,.16);color:#444;
+    padding:9px 22px;border-radius:999px;font-size:9px;letter-spacing:.45em;text-transform:uppercase;
     cursor:pointer;transition:all .4s ease;font-weight:300}
   #stopBtn:active{background:rgba(255,255,255,.02);color:#666}
 
@@ -90,19 +67,22 @@
 <body>
 <div id="stage">
   <div id="landing">
-    <div class="brand">Sleep · <b>Pacemaker</b></div>
-    <button id="enterBtn">ENTER THE VOID</button>
+    <div class="brand">Hypnotic · <b>Pacemaker</b></div>
+    <button id="enterBtn">BEGIN · 5 MIN</button>
     <p class="disclaimer">
-      A 5-minute box-breathing session with binaural delta entrainment.
-      For relaxation only — not a medical device. Use headphones.
+      One minute of paced breathing, then four minutes of 8D delta entrainment.
+      Use headphones. For relaxation only — not a medical device.
     </p>
   </div>
 
   <div id="session">
+    <canvas id="viz"></canvas>
+    <div class="phase-text" id="phase">
+      <span class="label" id="phaseLbl">Breathe In</span>
+      <span class="sub" id="phaseSub">4 · 2 · 4</span>
+    </div>
     <div class="timer" id="timer">5:00</div>
-    <div class="orb-wrap"><div class="orb" id="orb"></div></div>
-    <div class="phase" id="phase"><span class="label" id="phaseLbl">Breathe In</span></div>
-    <button id="stopBtn">Stop Session</button>
+    <button id="stopBtn">Stop</button>
   </div>
 
   <div id="fadeOut"></div>
@@ -114,26 +94,139 @@
   const session = document.getElementById('session');
   const enterBtn = document.getElementById('enterBtn');
   const stopBtn = document.getElementById('stopBtn');
-  const orb = document.getElementById('orb');
-  const phase = document.getElementById('phase');
+  const phaseEl = document.getElementById('phase');
   const phaseLbl = document.getElementById('phaseLbl');
+  const phaseSub = document.getElementById('phaseSub');
   const timerEl = document.getElementById('timer');
   const fade = document.getElementById('fadeOut');
+  const canvas = document.getElementById('viz');
+  const ctx = canvas.getContext('2d');
 
-  const SESSION_MS = 5 * 60 * 1000;
+  const SESSION_MS = 5*60*1000;
+  const BREATH_MS  = 1*60*1000;     // Phase 1 length
+  // 4s inhale, 2s hold, 4s exhale, 2s hold (total 12s? spec says 4/2/4 - we'll do 4-2-4-2 loop = 12s, hold-bot to keep symmetry hidden)
+  // Spec: 4 inhale, 2 hold, 4 exhale. Loop = 10s.
+  const CYCLE_MS = 10000;
   const PHASES = [
-    {name:'Breathe In', cls:'inhale',   dur:4000},
-    {name:'Hold',       cls:'hold-top', dur:4000},
-    {name:'Breathe Out',cls:'exhale',   dur:4000},
-    {name:'Hold',       cls:'hold-bot', dur:4000},
+    {name:'Breathe In', sub:'4s', dur:4000, kind:'in'},
+    {name:'Hold',       sub:'2s', dur:2000, kind:'hold'},
+    {name:'Breathe Out',sub:'4s', dur:4000, kind:'out'},
   ];
-  const CYCLE = 16000;
 
+  // Audio nodes
   let audioCtx, masterGain, oscL, oscR, gL, gR, noiseSrc, noiseGain,
-      droneOsc, droneGain, panner, lfo, lfoGain;
-  let sessionStart = 0, masterTimer = null, phaseTimer = null, tickTimer = null;
-  let liftTimer = null, running = false, ended = false;
+      droneGain, panner, lfo, lfoGain, droneOscs = [];
+  let sessionStart = 0, masterTimer = null, phaseTimer = null, tickTimer = null,
+      liftTimer = null, droneTimer = null;
+  let running = false, ended = false;
 
+  // ---------- Canvas ----------
+  let W=0,H=0,DPR=1;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W*DPR; canvas.height = H*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize', resize);
+
+  let rafId = null;
+  let t0 = 0;
+  function draw(now){
+    if(!running||ended) return;
+    const t = (now - t0)/1000; // seconds since session start
+    const elapsed = now - sessionStart;
+    ctx.clearRect(0,0,W,H);
+
+    const cx = W/2, cy = H/2;
+    const baseR = Math.min(W,H)*0.22;
+
+    // Smooth transition factor 0..1 between phase 1 (aura) and phase 2 (ripples)
+    // Transition window 58s..62s
+    const trans = Math.max(0, Math.min(1, (elapsed - 58000)/4000));
+
+    // ------- Phase 1: Breathing aura -------
+    if(trans < 1){
+      // breath progress through current cycle
+      const cyc = (elapsed % CYCLE_MS)/1000;
+      let scale = 0.78;
+      if(cyc < 4){ // inhale ease in/out
+        const p = cyc/4;
+        const e = 0.5 - 0.5*Math.cos(p*Math.PI);
+        scale = 0.78 + 0.42*e;
+      } else if(cyc < 6){ // hold top
+        scale = 1.20;
+      } else { // exhale
+        const p = (cyc-6)/4;
+        const e = 0.5 - 0.5*Math.cos(p*Math.PI);
+        scale = 1.20 - 0.42*e;
+      }
+      const r = baseR * scale;
+
+      const a1 = (1-trans);
+      // outer glow
+      const g1 = ctx.createRadialGradient(cx,cy,r*0.2, cx,cy, r*2.4);
+      g1.addColorStop(0, `rgba(44,53,49,${0.55*a1})`);
+      g1.addColorStop(0.35, `rgba(26,35,50,${0.35*a1})`);
+      g1.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g1;
+      ctx.beginPath(); ctx.arc(cx,cy,r*2.4,0,Math.PI*2); ctx.fill();
+
+      // inner orb
+      const g2 = ctx.createRadialGradient(cx- r*0.15, cy- r*0.18, r*0.1, cx,cy, r);
+      g2.addColorStop(0, `rgba(70,86,102,${0.85*a1})`);
+      g2.addColorStop(0.4, `rgba(44,53,49,${0.6*a1})`);
+      g2.addColorStop(1, `rgba(12,16,22,${0.05*a1})`);
+      ctx.fillStyle = g2;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+
+      // ring stroke
+      ctx.lineWidth = 1.1;
+      ctx.strokeStyle = `rgba(120,140,160,${0.12*a1})`;
+      ctx.beginPath(); ctx.arc(cx,cy,r*1.06,0,Math.PI*2); ctx.stroke();
+    }
+
+    // ------- Phase 2: Concentric expanding ripples -------
+    if(trans > 0){
+      const a2 = trans;
+      const ringCount = 6;
+      const period = 6.0; // seconds for a ring to travel out
+      const maxR = Math.min(W,H)*0.55;
+      for(let i=0;i<ringCount;i++){
+        const phase = ((t/period) + i/ringCount) % 1;
+        const r = baseR*0.35 + phase * (maxR - baseR*0.35);
+        // fade in then out
+        const env = Math.sin(phase*Math.PI); // 0..1..0
+        const alpha = 0.22 * env * a2;
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = `rgba(120,140,160,${alpha})`;
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+
+        // soft inner fill on innermost ring
+        if(i===0){
+          const g = ctx.createRadialGradient(cx,cy,0, cx,cy, r);
+          g.addColorStop(0, `rgba(44,53,49,${0.35*a2*env})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+        }
+      }
+
+      // central anchor dot — slowly drifts horizontally as a "pendulum" anchor
+      const swing = Math.sin(t * (2*Math.PI*0.15)) * Math.min(W,H)*0.04;
+      const cr = baseR*0.18;
+      const gC = ctx.createRadialGradient(cx+swing,cy, 0, cx+swing,cy, cr);
+      gC.addColorStop(0, `rgba(90,110,130,${0.85*a2})`);
+      gC.addColorStop(0.5, `rgba(44,53,49,${0.5*a2})`);
+      gC.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gC;
+      ctx.beginPath(); ctx.arc(cx+swing,cy,cr,0,Math.PI*2); ctx.fill();
+    }
+
+    rafId = requestAnimationFrame(draw);
+  }
+
+  // ---------- Audio ----------
   function buildAudio(){
     audioCtx = new (window.AudioContext||window.webkitAudioContext)();
     masterGain = audioCtx.createGain();
@@ -169,50 +262,48 @@
     noiseSrc.connect(lp).connect(noiseGain).connect(masterGain);
     noiseSrc.start();
 
-    // Celestial drone -> stereo panner -> master
+    // 8D drone chain (silent until phase 2)
     panner = audioCtx.createStereoPanner();
     panner.pan.value = 0;
     droneGain = audioCtx.createGain(); droneGain.gain.value = 0.0;
     const droneFilter = audioCtx.createBiquadFilter();
-    droneFilter.type='lowpass'; droneFilter.frequency.value=900;
+    droneFilter.type='lowpass'; droneFilter.frequency.value=950;
 
-    // singing bowl: stacked sines
-    const freqs = [196, 294, 392.4, 587]; // G3, D4, G4, D5-ish
+    // crystal singing bowl: stacked sines
+    const freqs = [196, 294, 392.4, 587];
     freqs.forEach((f,i)=>{
       const o = audioCtx.createOscillator();
-      o.type = i===0?'sine':'sine';
+      o.type = 'sine';
       o.frequency.value = f;
       const g = audioCtx.createGain();
       g.gain.value = 0.12 / (i+1);
       o.connect(g).connect(droneFilter);
       o.start();
+      droneOscs.push(o);
     });
     droneFilter.connect(droneGain).connect(panner).connect(masterGain);
 
-    // LFO panning matched to 16s breath cycle (period 16s -> freq 1/16 Hz)
+    // 8D LFO: 0.15Hz pan sweep
     lfo = audioCtx.createOscillator();
     lfo.type='sine';
-    lfo.frequency.value = 1/16;
+    lfo.frequency.value = 0.15;
     lfoGain = audioCtx.createGain();
     lfoGain.gain.value = 0.95;
     lfo.connect(lfoGain).connect(panner.pan);
     lfo.start();
 
-    // gentle swell of drone in/out matched to breath
-    const swell = audioCtx.createOscillator();
-    swell.type='sine'; swell.frequency.value = 1/16;
-    const swellGain = audioCtx.createGain(); swellGain.gain.value = 0.09;
-    const swellOffset = audioCtx.createConstantSource();
-    swellOffset.offset.value = 0.11;
-    swell.connect(swellGain).connect(droneGain.gain);
-    swellOffset.connect(droneGain.gain);
-    swell.start(); swellOffset.start();
-
     // master fade in
     const now = audioCtx.currentTime;
-    masterGain.gain.cancelScheduledValues(now);
     masterGain.gain.setValueAtTime(0, now);
     masterGain.gain.linearRampToValueAtTime(0.9, now+5);
+  }
+
+  function introduceDrone(){
+    if(!audioCtx || !droneGain) return;
+    const now = audioCtx.currentTime;
+    droneGain.gain.cancelScheduledValues(now);
+    droneGain.gain.setValueAtTime(droneGain.gain.value, now);
+    droneGain.gain.linearRampToValueAtTime(0.35, now + 12);
   }
 
   function fadeAudioOut(seconds){
@@ -231,14 +322,11 @@
     }catch(e){}
   }
 
+  // ---------- Phase loop ----------
   function runPhase(i){
     const p = PHASES[i];
-    orb.classList.remove('inhale','hold-top','exhale','hold-bot');
-    // force reflow so transition restarts cleanly
-    void orb.offsetWidth;
-    orb.style.transitionDuration = (p.dur/1000)+'s';
-    orb.classList.add(p.cls);
     phaseLbl.textContent = p.name;
+    phaseSub.textContent = p.sub;
     phaseTimer = setTimeout(()=>runPhase((i+1)%PHASES.length), p.dur);
   }
 
@@ -249,7 +337,8 @@
   }
 
   function tick(){
-    const left = SESSION_MS - (performance.now()-sessionStart);
+    const elapsed = performance.now() - sessionStart;
+    const left = SESSION_MS - elapsed;
     timerEl.textContent = fmt(left);
     if(left<=0){ endSession(); return; }
     tickTimer = setTimeout(tick, 250);
@@ -257,53 +346,68 @@
 
   function startSession(){
     if(running) return;
-    running = true;
+    running = true; ended = false;
     landing.classList.add('hidden');
-    setTimeout(()=>{ session.classList.add('on'); phase.classList.add('show'); }, 400);
+    setTimeout(()=>{
+      session.classList.add('on');
+      phaseEl.classList.add('show');
+    }, 400);
     buildAudio();
     sessionStart = performance.now();
+    t0 = sessionStart;
     timerEl.textContent = '5:00';
+    resize();
     runPhase(0);
     tick();
+    rafId = requestAnimationFrame(draw);
+
+    // At 1:00, fade out breathing text and bring in the drone
+    droneTimer = setTimeout(()=>{
+      phaseEl.classList.remove('show');
+      introduceDrone();
+    }, BREATH_MS);
+
     masterTimer = setTimeout(endSession, SESSION_MS);
   }
 
   function endSession(){
     if(ended) return;
     ended = true;
-    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer);
+    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
     fadeAudioOut(5);
     fade.classList.add('on');
     setTimeout(()=>{
-      try{audioCtx&&audioCtx.close()}catch(e){}
-      audioCtx=null;
+      try{audioCtx&&audioCtx.close()}catch(e){} audioCtx=null;
+      cancelAnimationFrame(rafId);
     }, 5200);
   }
 
   function stopSession(){
-    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer);
+    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
     clearTimeout(liftTimer); liftTimer=null;
+    cancelAnimationFrame(rafId);
     killAudio();
-    session.classList.remove('on'); phase.classList.remove('show');
+    session.classList.remove('on');
+    phaseEl.classList.remove('show');
     fade.classList.remove('on');
-    orb.classList.remove('inhale','hold-top','exhale','hold-bot');
+    ctx.clearRect(0,0,W,H);
     running = false; ended = false;
     setTimeout(()=>{ landing.classList.remove('hidden'); }, 600);
   }
 
   enterBtn.addEventListener('click', startSession);
-  stopBtn.addEventListener('click', stopSession);
+  stopBtn.addEventListener('click', (e)=>{ e.stopPropagation(); stopSession(); });
 
-  // Touch-hold safety: lift finger -> 5s fade to black
+  // Touch-hold safety
   function onTouchStart(){
     if(!running||ended) return;
     if(liftTimer){ clearTimeout(liftTimer); liftTimer=null; }
     if(fade.classList.contains('on')){
-      // user re-engaged before full collapse — restore audio if still alive
       fade.classList.remove('on');
       if(audioCtx){
         const now = audioCtx.currentTime;
         masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, now);
         masterGain.gain.linearRampToValueAtTime(0.9, now+2);
       }
     }
@@ -314,18 +418,19 @@
     liftTimer = setTimeout(()=>{
       fade.classList.add('on');
       fadeAudioOut(5);
-    }, 0); // begin 5s fade immediately on lift; tween itself is 5s
+    }, 0);
   }
-  // Treat any touch on session as engagement
   session.addEventListener('touchstart', onTouchStart, {passive:true});
   session.addEventListener('touchend', onTouchEnd, {passive:true});
   session.addEventListener('touchcancel', onTouchEnd, {passive:true});
   session.addEventListener('mousedown', onTouchStart);
   session.addEventListener('mouseup', onTouchEnd);
 
-  // Block gestures
   document.addEventListener('gesturestart', e=>e.preventDefault());
   document.addEventListener('dblclick', e=>e.preventDefault());
+
+  // initial size
+  resize();
 })();
 </script>
 </body>
