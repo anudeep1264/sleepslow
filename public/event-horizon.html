@@ -4,397 +4,328 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#000000" />
-<title>Project Event Horizon</title>
+<title>Anti-Anxiety Sleep Pacemaker</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    width: 100%; height: 100%; background: #000; color: #d8c9a8;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
-    overflow: hidden; overscroll-behavior: none; touch-action: none;
-    -webkit-font-smoothing: antialiased;
-  }
-  #stage { position: fixed; inset: 0; background: #000; }
-  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  html,body{width:100%;height:100%;background:#000;color:#555;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",system-ui,sans-serif;
+    overflow:hidden;overscroll-behavior:none;touch-action:none;-webkit-font-smoothing:antialiased;font-weight:300}
+  #stage{position:fixed;inset:0;background:#000}
 
   /* Landing */
-  #landing {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; padding: 0 28px;
-    transition: opacity 1.2s ease;
+  #landing{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 32px;transition:opacity 1.4s ease;z-index:10}
+  #landing.hidden{opacity:0;pointer-events:none}
+  .brand{position:absolute;top:9vh;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.55em;
+    text-transform:uppercase;color:#3a3a3a;font-weight:300}
+  .brand b{color:#6a6a6a;font-weight:400}
+  #enterBtn{position:relative;width:240px;height:240px;border-radius:50%;border:1px solid rgba(120,130,140,.18);
+    background:radial-gradient(circle at 50% 50%,
+      rgba(45,55,70,.55) 0%,
+      rgba(35,45,55,.35) 35%,
+      rgba(45,34,25,.18) 65%,
+      rgba(0,0,0,0) 80%);
+    color:#7a7a7a;font-size:10px;letter-spacing:.5em;font-weight:300;cursor:pointer;outline:none;
+    box-shadow:0 0 80px 10px rgba(30,40,50,.35), inset 0 0 60px rgba(40,50,60,.25);
+    animation:landPulse 7s ease-in-out infinite;transition:transform .8s ease,opacity 1s ease}
+  #enterBtn:active{transform:scale(.97)}
+  @keyframes landPulse{
+    0%,100%{box-shadow:0 0 80px 10px rgba(30,40,50,.3), inset 0 0 60px rgba(40,50,60,.22);transform:scale(1)}
+    50%{box-shadow:0 0 120px 20px rgba(45,55,70,.45), inset 0 0 80px rgba(50,60,72,.32);transform:scale(1.03)}
   }
-  #landing.hidden { opacity: 0; pointer-events: none; }
+  .disclaimer{position:absolute;bottom:7vh;left:24px;right:24px;text-align:center;font-size:9.5px;line-height:1.85;
+    color:#2e2e2e;letter-spacing:.12em;max-width:340px;margin:0 auto}
 
-  .title {
-    position: absolute; top: 8vh; left: 0; right: 0; text-align: center;
-    font-size: 10px; letter-spacing: 0.5em; text-transform: uppercase;
-    color: #6b5a3a; font-weight: 300;
-  }
-  .title span { color: #a88a55; }
+  /* Session */
+  #session{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 2.4s ease;z-index:5}
+  #session.on{opacity:1;pointer-events:auto}
 
-  #initBtn {
-    position: relative;
-    width: 220px; height: 220px; border-radius: 50%;
-    background: radial-gradient(circle at 50% 50%, rgba(255,170,80,0.18) 0%, rgba(80,30,90,0.08) 55%, transparent 75%);
-    border: 1px solid rgba(220,170,100,0.35);
-    color: #f0d9a8; font-size: 11px; letter-spacing: 0.45em; font-weight: 400;
-    cursor: pointer; outline: none;
-    backdrop-filter: blur(2px);
+  .orb-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .orb{
+    width:46vmin;height:46vmin;border-radius:50%;
+    background:
+      radial-gradient(circle at 38% 36%,
+        rgba(60,72,90,.85) 0%,
+        rgba(44,53,49,.7) 28%,
+        rgba(45,34,25,.55) 55%,
+        rgba(20,24,28,.25) 75%,
+        rgba(0,0,0,0) 100%);
+    filter:blur(.5px);
     box-shadow:
-      0 0 60px rgba(255,150,60,0.15),
-      0 0 120px rgba(120,40,140,0.12),
-      inset 0 0 40px rgba(255,180,90,0.08);
-    animation: pulseBtn 4s ease-in-out infinite;
-    transition: transform 0.6s ease, opacity 0.8s ease, box-shadow 0.6s ease;
+      0 0 80px 30px rgba(26,35,50,.35),
+      0 0 180px 60px rgba(44,53,49,.22),
+      0 0 280px 100px rgba(45,34,25,.12),
+      inset 0 0 80px rgba(60,72,90,.25);
+    transform:scale(.7);opacity:.55;
+    transition:transform 4s cubic-bezier(.45,.05,.55,.95), opacity 4s cubic-bezier(.45,.05,.55,.95),
+      filter 4s cubic-bezier(.45,.05,.55,.95);
+    will-change:transform,opacity
   }
-  #initBtn:active { transform: scale(0.97); }
-  @keyframes pulseBtn {
-    0%, 100% { box-shadow: 0 0 60px rgba(255,150,60,0.15), 0 0 120px rgba(120,40,140,0.12), inset 0 0 40px rgba(255,180,90,0.08); }
-    50% { box-shadow: 0 0 90px rgba(255,170,80,0.28), 0 0 180px rgba(140,50,160,0.2), inset 0 0 60px rgba(255,190,110,0.14); }
-  }
+  .orb.inhale{transform:scale(1.15);opacity:1;filter:blur(0px)}
+  .orb.hold-top{transform:scale(1.15);opacity:1;filter:blur(0px);transition-duration:4s}
+  .orb.exhale{transform:scale(.7);opacity:.55;filter:blur(.5px)}
+  .orb.hold-bot{transform:scale(.7);opacity:.55;filter:blur(.5px);transition-duration:4s}
 
-  .disclaimer {
-    position: absolute; bottom: 6vh; left: 24px; right: 24px;
-    text-align: center; font-size: 9.5px; line-height: 1.7;
-    color: #4a4030; letter-spacing: 0.08em; font-weight: 300;
-    max-width: 340px; margin: 0 auto;
-  }
+  .phase{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;
+    font-size:11px;letter-spacing:.6em;text-transform:uppercase;color:#555;font-weight:300;
+    pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity 1.6s ease;
+    text-shadow:0 0 24px rgba(0,0,0,.9)}
+  .phase.show{opacity:.85}
+  .phase .label{display:block;margin-top:30vmin;font-size:10px;color:#4a4a4a}
 
-  #fadeOut {
-    position: absolute; inset: 0; background: #000; opacity: 0;
-    pointer-events: none; transition: opacity 1.6s ease;
-  }
-  #fadeOut.on { opacity: 1; }
+  .timer{position:absolute;top:max(22px,env(safe-area-inset-top));left:0;right:0;text-align:center;
+    font-size:10px;letter-spacing:.45em;color:#3d3d3d;font-variant-numeric:tabular-nums;font-weight:300}
 
-  .corner {
-    position: absolute; font-size: 8px; letter-spacing: 0.4em;
-    color: #2a2418; text-transform: uppercase; pointer-events: none;
-    opacity: 0; transition: opacity 2s ease 1s;
-  }
-  .corner.show { opacity: 1; }
-  .corner.tl { top: 18px; left: 18px; }
-  .corner.tr { top: 18px; right: 18px; }
-  .corner.bl { bottom: 18px; left: 18px; }
-  .corner.br { bottom: 18px; right: 18px; }
+  #stopBtn{position:absolute;bottom:max(36px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+    background:transparent;border:1px solid rgba(85,85,85,.18);color:#4a4a4a;
+    padding:11px 26px;border-radius:999px;font-size:9.5px;letter-spacing:.45em;text-transform:uppercase;
+    cursor:pointer;transition:all .4s ease;font-weight:300}
+  #stopBtn:active{background:rgba(255,255,255,.02);color:#666}
+
+  #fadeOut{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;
+    transition:opacity 5s ease;z-index:20}
+  #fadeOut.on{opacity:1}
 </style>
 </head>
 <body>
 <div id="stage">
-  <canvas id="cv"></canvas>
-
   <div id="landing">
-    <div class="title">Project · <span>Event Horizon</span></div>
-    <button id="initBtn">INITIATE SYNC</button>
+    <div class="brand">Sleep · <b>Pacemaker</b></div>
+    <button id="enterBtn">ENTER THE VOID</button>
     <p class="disclaimer">
-      Project Event Horizon is an interactive audio-visual art project for relaxation.
-      It is not a medical device. Avoid if prone to photosensitive epilepsy.
-      No data is collected.
+      A 5-minute box-breathing session with binaural delta entrainment.
+      For relaxation only — not a medical device. Use headphones.
     </p>
   </div>
 
-  <div class="corner tl" id="cTL">SYNC · 04.00Hz</div>
-  <div class="corner tr" id="cTR">δ DELTA</div>
-  <div class="corner bl" id="cBL">RESP · 6/MIN</div>
-  <div class="corner br" id="cBR">EH · 20:00</div>
+  <div id="session">
+    <div class="timer" id="timer">5:00</div>
+    <div class="orb-wrap"><div class="orb" id="orb"></div></div>
+    <div class="phase" id="phase"><span class="label" id="phaseLbl">Breathe In</span></div>
+    <button id="stopBtn">Stop Session</button>
+  </div>
 
   <div id="fadeOut"></div>
 </div>
 
 <script>
 (() => {
-  const cv = document.getElementById('cv');
-  const ctx = cv.getContext('2d');
   const landing = document.getElementById('landing');
-  const btn = document.getElementById('initBtn');
+  const session = document.getElementById('session');
+  const enterBtn = document.getElementById('enterBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const orb = document.getElementById('orb');
+  const phase = document.getElementById('phase');
+  const phaseLbl = document.getElementById('phaseLbl');
+  const timerEl = document.getElementById('timer');
   const fade = document.getElementById('fadeOut');
-  const corners = [document.getElementById('cTL'),document.getElementById('cTR'),document.getElementById('cBL'),document.getElementById('cBR')];
 
-  let W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
-  function resize() {
-    W = window.innerWidth; H = window.innerHeight;
-    cv.width = W * DPR; cv.height = H * DPR;
-    cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  }
-  window.addEventListener('resize', resize);
-  resize();
+  const SESSION_MS = 5 * 60 * 1000;
+  const PHASES = [
+    {name:'Breathe In', cls:'inhale',   dur:4000},
+    {name:'Hold',       cls:'hold-top', dur:4000},
+    {name:'Breathe Out',cls:'exhale',   dur:4000},
+    {name:'Hold',       cls:'hold-bot', dur:4000},
+  ];
+  const CYCLE = 16000;
 
-  // --- particles ---
-  const N = Math.min(360, Math.floor((W * H) / 2400));
-  const particles = [];
-  function spawn(p) {
-    const a = Math.random() * Math.PI * 2;
-    const r = 60 + Math.random() * (Math.min(W, H) * 0.55);
-    p.a = a;
-    p.r = r;
-    p.r0 = r;
-    p.spin = 0.0008 + Math.random() * 0.0035 + (1 / (r + 40)) * 0.4;
-    p.size = 0.4 + Math.random() * 1.6;
-    p.life = 0.4 + Math.random() * 0.6;
-    p.hue = Math.random();
-  }
-  for (let i = 0; i < N; i++) { const p = {}; spawn(p); particles.push(p); }
+  let audioCtx, masterGain, oscL, oscR, gL, gR, noiseSrc, noiseGain,
+      droneOsc, droneGain, panner, lfo, lfoGain;
+  let sessionStart = 0, masterTimer = null, phaseTimer = null, tickTimer = null;
+  let liftTimer = null, running = false, ended = false;
 
-  // --- state ---
-  let started = false;
-  let t0 = 0;
-  let cx = 0, cy = 0;
-  let touch = null; // {x,y}
-  let liftTimer = null;
-  let masterTimer = null;
-  let panX = 0; // -1 .. 1 from gyroscope
-  let collapsing = false;
-  let collapseStart = 0;
-
-  // audio
-  let audioCtx, masterGain, oscL, oscR, pannerL, pannerR, noiseNode, noiseGain;
-
-  function initAudio() {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function buildAudio(){
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
     masterGain = audioCtx.createGain();
     masterGain.gain.value = 0;
     masterGain.connect(audioCtx.destination);
 
-    // binaural: 100 Hz L, 104 Hz R -> 4 Hz delta
+    // Binaural 100/104 -> 4Hz delta
     const merger = audioCtx.createChannelMerger(2);
-    oscL = audioCtx.createOscillator(); oscL.type = 'sine'; oscL.frequency.value = 100;
-    oscR = audioCtx.createOscillator(); oscR.type = 'sine'; oscR.frequency.value = 104;
-    const gL = audioCtx.createGain(); gL.gain.value = 0.18;
-    const gR = audioCtx.createGain(); gR.gain.value = 0.18;
-    oscL.connect(gL).connect(merger, 0, 0);
-    oscR.connect(gR).connect(merger, 0, 1);
-
-    // pan via stereo gains controlled by gyroscope
-    pannerL = gL; pannerR = gR;
-
-    // sub hum + filtered noise wash
-    const sub = audioCtx.createOscillator(); sub.type = 'sine'; sub.frequency.value = 55;
-    const subG = audioCtx.createGain(); subG.gain.value = 0.05;
-    sub.connect(subG).connect(masterGain);
-    sub.start();
-
-    // noise
-    const bufSize = audioCtx.sampleRate * 2;
-    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
-    const d = buf.getChannelData(0);
-    let last = 0;
-    for (let i = 0; i < bufSize; i++) {
-      const white = Math.random() * 2 - 1;
-      last = (last + 0.02 * white) / 1.02;
-      d[i] = last * 3.5;
-    }
-    noiseNode = audioCtx.createBufferSource();
-    noiseNode.buffer = buf; noiseNode.loop = true;
-    const lp = audioCtx.createBiquadFilter();
-    lp.type = 'lowpass'; lp.frequency.value = 380;
-    noiseGain = audioCtx.createGain(); noiseGain.gain.value = 0.08;
-    noiseNode.connect(lp).connect(noiseGain).connect(masterGain);
-    noiseNode.start();
-
+    oscL = audioCtx.createOscillator(); oscL.type='sine'; oscL.frequency.value=100;
+    oscR = audioCtx.createOscillator(); oscR.type='sine'; oscR.frequency.value=104;
+    gL = audioCtx.createGain(); gL.gain.value=0.11;
+    gR = audioCtx.createGain(); gR.gain.value=0.11;
+    oscL.connect(gL).connect(merger,0,0);
+    oscR.connect(gR).connect(merger,0,1);
     merger.connect(masterGain);
     oscL.start(); oscR.start();
 
-    // fade in
-    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-    masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(0.9, audioCtx.currentTime + 4);
+    // Brown noise floor
+    const sr = audioCtx.sampleRate;
+    const buf = audioCtx.createBuffer(1, sr*4, sr);
+    const d = buf.getChannelData(0);
+    let last = 0;
+    for(let i=0;i<d.length;i++){
+      const w = Math.random()*2-1;
+      last = (last + 0.02*w)/1.02;
+      d[i] = last*3.5;
+    }
+    noiseSrc = audioCtx.createBufferSource();
+    noiseSrc.buffer = buf; noiseSrc.loop = true;
+    const lp = audioCtx.createBiquadFilter();
+    lp.type='lowpass'; lp.frequency.value=320;
+    noiseGain = audioCtx.createGain(); noiseGain.gain.value=0.10;
+    noiseSrc.connect(lp).connect(noiseGain).connect(masterGain);
+    noiseSrc.start();
+
+    // Celestial drone -> stereo panner -> master
+    panner = audioCtx.createStereoPanner();
+    panner.pan.value = 0;
+    droneGain = audioCtx.createGain(); droneGain.gain.value = 0.0;
+    const droneFilter = audioCtx.createBiquadFilter();
+    droneFilter.type='lowpass'; droneFilter.frequency.value=900;
+
+    // singing bowl: stacked sines
+    const freqs = [196, 294, 392.4, 587]; // G3, D4, G4, D5-ish
+    freqs.forEach((f,i)=>{
+      const o = audioCtx.createOscillator();
+      o.type = i===0?'sine':'sine';
+      o.frequency.value = f;
+      const g = audioCtx.createGain();
+      g.gain.value = 0.12 / (i+1);
+      o.connect(g).connect(droneFilter);
+      o.start();
+    });
+    droneFilter.connect(droneGain).connect(panner).connect(masterGain);
+
+    // LFO panning matched to 16s breath cycle (period 16s -> freq 1/16 Hz)
+    lfo = audioCtx.createOscillator();
+    lfo.type='sine';
+    lfo.frequency.value = 1/16;
+    lfoGain = audioCtx.createGain();
+    lfoGain.gain.value = 0.95;
+    lfo.connect(lfoGain).connect(panner.pan);
+    lfo.start();
+
+    // gentle swell of drone in/out matched to breath
+    const swell = audioCtx.createOscillator();
+    swell.type='sine'; swell.frequency.value = 1/16;
+    const swellGain = audioCtx.createGain(); swellGain.gain.value = 0.09;
+    const swellOffset = audioCtx.createConstantSource();
+    swellOffset.offset.value = 0.11;
+    swell.connect(swellGain).connect(droneGain.gain);
+    swellOffset.connect(droneGain.gain);
+    swell.start(); swellOffset.start();
+
+    // master fade in
+    const now = audioCtx.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(0, now);
+    masterGain.gain.linearRampToValueAtTime(0.9, now+5);
   }
 
-  function setPan(x) {
-    if (!pannerL) return;
-    // x in [-1, 1]; -1 = left
-    const l = Math.cos((x + 1) * Math.PI / 4); // equal-power
-    const r = Math.sin((x + 1) * Math.PI / 4);
-    pannerL.gain.setTargetAtTime(0.22 * l * 1.6, audioCtx.currentTime, 0.25);
-    pannerR.gain.setTargetAtTime(0.22 * r * 1.6, audioCtx.currentTime, 0.25);
+  function fadeAudioOut(seconds){
+    if(!audioCtx) return;
+    const now = audioCtx.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+    masterGain.gain.linearRampToValueAtTime(0.0001, now+seconds);
   }
 
-  function killAudio() {
-    if (!audioCtx) return;
-    try {
-      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-      masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.8);
-      setTimeout(() => { try { audioCtx.close(); } catch(e){} }, 2500);
-    } catch(e){}
+  function killAudio(){
+    if(!audioCtx) return;
+    try{
+      fadeAudioOut(0.4);
+      setTimeout(()=>{ try{audioCtx.close()}catch(e){} audioCtx=null; }, 600);
+    }catch(e){}
   }
 
-  async function requestGyro() {
-    try {
-      if (typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission === 'function') {
-        const res = await DeviceOrientationEvent.requestPermission();
-        if (res !== 'granted') return;
-      }
-      window.addEventListener('deviceorientation', (e) => {
-        // gamma: left-right tilt [-90..90]
-        const g = e.gamma || 0;
-        const x = Math.max(-1, Math.min(1, g / 35));
-        panX = panX * 0.85 + x * 0.15;
-        setPan(panX);
-      }, true);
-    } catch(e){}
+  function runPhase(i){
+    const p = PHASES[i];
+    orb.classList.remove('inhale','hold-top','exhale','hold-bot');
+    // force reflow so transition restarts cleanly
+    void orb.offsetWidth;
+    orb.style.transitionDuration = (p.dur/1000)+'s';
+    orb.classList.add(p.cls);
+    phaseLbl.textContent = p.name;
+    phaseTimer = setTimeout(()=>runPhase((i+1)%PHASES.length), p.dur);
   }
 
-  function start() {
-    if (started) return;
-    started = true;
-    t0 = performance.now();
+  function fmt(ms){
+    const s = Math.max(0, Math.ceil(ms/1000));
+    const m = Math.floor(s/60), r = s%60;
+    return m+':' + String(r).padStart(2,'0');
+  }
+
+  function tick(){
+    const left = SESSION_MS - (performance.now()-sessionStart);
+    timerEl.textContent = fmt(left);
+    if(left<=0){ endSession(); return; }
+    tickTimer = setTimeout(tick, 250);
+  }
+
+  function startSession(){
+    if(running) return;
+    running = true;
     landing.classList.add('hidden');
-    corners.forEach(c => c.classList.add('show'));
-    initAudio();
-    requestGyro();
-
-    // 20 min hard shutdown
-    masterTimer = setTimeout(() => beginCollapse(), 20 * 60 * 1000);
+    setTimeout(()=>{ session.classList.add('on'); phase.classList.add('show'); }, 400);
+    buildAudio();
+    sessionStart = performance.now();
+    timerEl.textContent = '5:00';
+    runPhase(0);
+    tick();
+    masterTimer = setTimeout(endSession, SESSION_MS);
   }
 
-  function beginCollapse() {
-    if (collapsing) return;
-    collapsing = true;
-    collapseStart = performance.now();
+  function endSession(){
+    if(ended) return;
+    ended = true;
+    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer);
+    fadeAudioOut(5);
+    fade.classList.add('on');
+    setTimeout(()=>{
+      try{audioCtx&&audioCtx.close()}catch(e){}
+      audioCtx=null;
+    }, 5200);
+  }
+
+  function stopSession(){
+    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer);
+    clearTimeout(liftTimer); liftTimer=null;
     killAudio();
-    setTimeout(() => { fade.classList.add('on'); }, 800);
+    session.classList.remove('on'); phase.classList.remove('show');
+    fade.classList.remove('on');
+    orb.classList.remove('inhale','hold-top','exhale','hold-bot');
+    running = false; ended = false;
+    setTimeout(()=>{ landing.classList.remove('hidden'); }, 600);
   }
 
-  btn.addEventListener('click', () => {
-    start();
-  });
+  enterBtn.addEventListener('click', startSession);
+  stopBtn.addEventListener('click', stopSession);
 
-  // touch interaction
-  function onTouchMove(e) {
-    if (!started) return;
-    const t = e.touches ? e.touches[0] : e;
-    touch = { x: t.clientX, y: t.clientY };
-    if (liftTimer) { clearTimeout(liftTimer); liftTimer = null; }
-  }
-  function onTouchStart(e) {
-    if (!started) return;
-    if (collapsing) { // tap to revive
-      collapsing = false; fade.classList.remove('on');
-      if (audioCtx && audioCtx.state === 'closed') { /* gone */ }
-      else if (masterGain) {
-        masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        masterGain.gain.linearRampToValueAtTime(0.9, audioCtx.currentTime + 2);
+  // Touch-hold safety: lift finger -> 5s fade to black
+  function onTouchStart(){
+    if(!running||ended) return;
+    if(liftTimer){ clearTimeout(liftTimer); liftTimer=null; }
+    if(fade.classList.contains('on')){
+      // user re-engaged before full collapse — restore audio if still alive
+      fade.classList.remove('on');
+      if(audioCtx){
+        const now = audioCtx.currentTime;
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.linearRampToValueAtTime(0.9, now+2);
       }
     }
-    onTouchMove(e);
   }
-  function onTouchEnd() {
-    if (!started) return;
-    touch = null;
-    if (liftTimer) clearTimeout(liftTimer);
-    liftTimer = setTimeout(() => beginCollapse(), 5000);
+  function onTouchEnd(){
+    if(!running||ended) return;
+    if(liftTimer) clearTimeout(liftTimer);
+    liftTimer = setTimeout(()=>{
+      fade.classList.add('on');
+      fadeAudioOut(5);
+    }, 0); // begin 5s fade immediately on lift; tween itself is 5s
   }
+  // Treat any touch on session as engagement
+  session.addEventListener('touchstart', onTouchStart, {passive:true});
+  session.addEventListener('touchend', onTouchEnd, {passive:true});
+  session.addEventListener('touchcancel', onTouchEnd, {passive:true});
+  session.addEventListener('mousedown', onTouchStart);
+  session.addEventListener('mouseup', onTouchEnd);
 
-  window.addEventListener('touchstart', onTouchStart, { passive: true });
-  window.addEventListener('touchmove', onTouchMove, { passive: true });
-  window.addEventListener('touchend', onTouchEnd, { passive: true });
-  window.addEventListener('mousedown', onTouchStart);
-  window.addEventListener('mousemove', (e) => { if (e.buttons) onTouchMove(e); });
-  window.addEventListener('mouseup', onTouchEnd);
-
-  // --- render loop ---
-  function frame(now) {
-    requestAnimationFrame(frame);
-    const t = (now - t0) / 1000;
-
-    cx = W / 2; cy = H / 2;
-
-    // breath: 6 bpm -> period 10s. 0..1 over 10s.
-    const breath = started ? (0.5 - 0.5 * Math.cos((t % 10) / 10 * Math.PI * 2)) : 0.5;
-    // breath 0 = contracted, 1 = expanded
-    const breathScale = 0.85 + breath * 0.3;
-    const breathGlow = 0.7 + breath * 0.6;
-
-    let collapseK = 1;
-    if (collapsing) {
-      const dt = (now - collapseStart) / 1500;
-      collapseK = Math.max(0, 1 - dt);
-    }
-
-    // trail / motion blur
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(0, 0, W, H);
-
-    // background radial glow
-    ctx.globalCompositeOperation = 'lighter';
-    const baseR = Math.min(W, H) * 0.42 * breathScale * collapseK;
-    const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR * 1.6);
-    grd.addColorStop(0, `rgba(255,170,80,${0.16 * breathGlow * collapseK})`);
-    grd.addColorStop(0.35, `rgba(180,70,40,${0.10 * breathGlow * collapseK})`);
-    grd.addColorStop(0.7, `rgba(70,20,90,${0.10 * breathGlow * collapseK})`);
-    grd.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grd;
-    ctx.fillRect(0, 0, W, H);
-
-    // event horizon ring (dark void with bright amber rim)
-    const evR = baseR * 0.28;
-    const ring = ctx.createRadialGradient(cx, cy, evR * 0.6, cx, cy, evR * 1.4);
-    ring.addColorStop(0, 'rgba(0,0,0,1)');
-    ring.addColorStop(0.55, 'rgba(0,0,0,0.95)');
-    ring.addColorStop(0.75, `rgba(255,180,90,${0.55 * breathGlow * collapseK})`);
-    ring.addColorStop(0.9, `rgba(160,60,140,${0.25 * collapseK})`);
-    ring.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.fillStyle = ring;
-    ctx.beginPath(); ctx.arc(cx, cy, evR * 1.6, 0, Math.PI * 2); ctx.fill();
-
-    // void
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = '#000';
-    ctx.beginPath(); ctx.arc(cx, cy, evR * 0.85, 0, Math.PI * 2); ctx.fill();
-
-    // particles - accretion disk
-    ctx.globalCompositeOperation = 'lighter';
-    for (let i = 0; i < N; i++) {
-      const p = particles[i];
-      // touch warp
-      let tx = 0, ty = 0;
-      if (touch) {
-        const px = cx + Math.cos(p.a) * p.r;
-        const py = cy + Math.sin(p.a) * p.r * 0.55;
-        const dx = touch.x - px, dy = touch.y - py;
-        const d2 = dx*dx + dy*dy;
-        const pull = Math.min(1, 8000 / (d2 + 800));
-        tx = dx * pull * 0.06;
-        ty = dy * pull * 0.06;
-      }
-
-      p.a += p.spin;
-      // breathing radial pulse
-      const rr = p.r0 * (0.9 + breath * 0.18) * collapseK;
-
-      const x = cx + Math.cos(p.a) * rr + tx;
-      const y = cy + Math.sin(p.a) * rr * 0.55 + ty; // elliptical disk
-
-      const heat = Math.max(0, 1 - (p.r0 / (Math.min(W, H) * 0.55)));
-      const r = 255;
-      const g = Math.floor(140 + 80 * heat);
-      const b = Math.floor(40 + 120 * (1 - heat) * 0.6);
-      const alpha = (0.35 + 0.5 * heat) * breathGlow * p.life * collapseK;
-
-      ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
-      ctx.beginPath();
-      ctx.arc(x, y, p.size * (1 + heat * 1.4) * collapseK, 0, Math.PI * 2);
-      ctx.fill();
-
-      if (Math.random() < 0.002) spawn(p);
-    }
-
-    // central bright pinpoint
-    ctx.globalCompositeOperation = 'lighter';
-    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, evR * 0.9 * collapseK);
-    core.addColorStop(0, `rgba(255,230,180,${0.9 * collapseK})`);
-    core.addColorStop(0.4, `rgba(255,150,70,${0.25 * collapseK})`);
-    core.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = core;
-    ctx.beginPath(); ctx.arc(cx, cy, evR * 0.9 * collapseK, 0, Math.PI * 2); ctx.fill();
-  }
-  requestAnimationFrame(frame);
-
-  // Prevent pinch/zoom & scroll
-  document.addEventListener('gesturestart', e => e.preventDefault());
-  document.addEventListener('dblclick', e => e.preventDefault());
+  // Block gestures
+  document.addEventListener('gesturestart', e=>e.preventDefault());
+  document.addEventListener('dblclick', e=>e.preventDefault());
 })();
 </script>
 </body>
