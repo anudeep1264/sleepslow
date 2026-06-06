@@ -1,29 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Project Event Horizon" },
+      {
+        name: "description",
+        content:
+          "An interactive audio-visual art project. A cybernetic cosmic anomaly to calm a racing mind before sleep.",
+      },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
+      { name: "theme-color", content: "#000000" },
+      { property: "og:title", content: "Project Event Horizon" },
+      {
+        property: "og:description",
+        content: "An interactive audio-visual art project for relaxation.",
+      },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  useEffect(() => {
+    window.location.replace("/event-horizon.html");
+  }, []);
+  return <div style={{ background: "#000", width: "100vw", height: "100vh" }} />;
 }
