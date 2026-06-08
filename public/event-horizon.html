@@ -493,30 +493,29 @@
     }catch(e){}
   }
 
-  // ---------- Phase loop ----------
-  let phaseTimer=null;
+  // ---------- Phase labels (audio-clock driven; updated by draw()) ----------
   const PHASES = [
     {name:'Breathe In', sub:'4s'},
     {name:'Hold',       sub:'2s'},
     {name:'Breathe Out',sub:'4s'},
   ];
-  function runPhase(i){
-    const p = PHASES[i];
-    phaseLbl.textContent = p.name;
-    phaseSub.textContent = p.sub;
-    const dur = i===1 ? 2000 : 4000;
-    phaseTimer = setTimeout(()=>runPhase((i+1)%PHASES.length), dur);
-  }
 
   function fmt(ms){
     const s = Math.max(0, Math.ceil(ms/1000));
     const m = Math.floor(s/60), r = s%60;
     return m+':' + String(r).padStart(2,'0');
   }
+  // Timer polls the audio clock. setTimeout drift doesn't matter — we always
+  // ask the AudioContext for ground truth, so the readout self-corrects.
   function tick(){
-    const elapsed = effectiveElapsed(performance.now());
+    const elapsed = audioNow()*1000;
     const left = SESSION_MS - elapsed;
     timerEl.textContent = fmt(left);
+    // Fade phase-text + bring pad in once breathing window closes (audio-clock).
+    if(!droneFaded && elapsed >= BREATH_MS){
+      droneFaded = true;
+      phaseEl.classList.remove('show');
+    }
     if(left<=0){ endSession(); return; }
     tickTimer = setTimeout(tick, 250);
   }
@@ -533,29 +532,24 @@
     }, 400);
     buildAudio();
     sessionStart = performance.now();
-    elapsedAccum = 0;
-    lastResumeAt = sessionStart;
+    audioStartTime = audioCtx.currentTime;
+    lastPhaseIdx = -1;
+    droneFaded = false;
     touching = false;
     visDim = 0; visDimTarget = 0;
     timerEl.textContent = '5:00';
     resize();
-    runPhase(0);
     tick();
     rafId = requestAnimationFrame(draw);
 
-    droneTimer = setTimeout(()=>{
-      phaseEl.classList.remove('show');
-      // bring pad in
-      if(audioCtx && padGain){
-        const now = audioCtx.currentTime;
-        padGain.gain.cancelScheduledValues(now);
-        padGain.gain.setValueAtTime(padGain.gain.value, now);
-        padGain.gain.linearRampToValueAtTime(0.32, now+10);
-      }
-    }, BREATH_MS);
-
-    masterTimer = setTimeout(endSession, SESSION_MS);
+    // Pre-schedule pad fade-in directly on the AUDIO clock (sample-accurate).
+    if(padGain){
+      const padInAt = audioStartTime + (BREATH_MS/1000);
+      padGain.gain.setValueAtTime(0.0, padInAt);
+      padGain.gain.linearRampToValueAtTime(0.32, padInAt + 10);
+    }
   }
+
 
   function endSession(){
     if(ended) return;
