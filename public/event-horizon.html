@@ -405,9 +405,9 @@
     thunderTimer = setTimeout(scheduleThunder, delaySec*1000 + 50);
   }
 
-  function triggerThunder(){
+  function triggerThunder(startAt){
     if(!audioCtx) return;
-    const now = audioCtx.currentTime;
+    const now = (typeof startAt === 'number') ? startAt : audioCtx.currentTime;
     const dur = 6 + Math.random()*8; // 6-14s rolling rumble
     const baseFreq = 28 + Math.random()*18; // 28-46Hz
     const peak = 0.35 + Math.random()*0.45; // volume variance
