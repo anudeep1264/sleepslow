@@ -192,13 +192,27 @@
       return;
     }
 
-    const elapsed = effectiveElapsed(now);
-    const t = elapsed/1000;
+    // Audio-clock driven. Frame jank cannot warp the pacer.
+    const t = audioNow();           // seconds
+    const elapsed = t * 1000;       // ms
     ctx.clearRect(0,0,W,H);
 
     const cx = W/2, cy = H/2;
     const baseR = Math.min(W,H)*0.22;
     const trans = Math.max(0, Math.min(1, (elapsed - 58000)/4000));
+
+    // Drive breath-phase label from the audio clock (Phase 1 only)
+    if(trans < 1){
+      const cycSec = (elapsed % CYCLE_MS)/1000;
+      const idx = cycSec < 4 ? 0 : (cycSec < 6 ? 1 : 2);
+      if(idx !== lastPhaseIdx){
+        lastPhaseIdx = idx;
+        const P = PHASES[idx];
+        phaseLbl.textContent = P.name;
+        phaseSub.textContent = P.sub;
+      }
+    }
+
 
     // ------- Phase 1: Breathing aura -------
     if(trans < 1){
