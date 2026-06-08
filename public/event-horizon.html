@@ -123,8 +123,11 @@
   let thunderTimer=null;
 
   // Session state
-  let sessionStart=0, elapsedAccum=0, lastResumeAt=0;
-  let masterTimer=null, droneTimer=null, tickTimer=null;
+  let sessionStart=0;
+  let audioStartTime=0;       // audioCtx.currentTime at session begin
+  let lastPhaseIdx=-1;
+  let droneFaded=false;
+  let tickTimer=null;
   let running=false, ended=false, touching=false;
 
   // ---------- Canvas ----------
@@ -155,10 +158,12 @@
   let visDim = 0, visDimTarget = 0;
   let lastPhaseFraction = 0;
 
-  function effectiveElapsed(now){
-    if(touching) return elapsedAccum + (now - lastResumeAt);
-    return elapsedAccum;
+  // The ONE timebase the pacer trusts: AudioContext.currentTime.
+  // Frame drops, jank, and setTimeout drift cannot warp this clock.
+  function audioNow(){
+    return audioCtx ? (audioCtx.currentTime - audioStartTime) : 0;
   }
+
 
   function draw(now){
     if(!running||ended){ rafId=null; return; }
@@ -187,13 +192,27 @@
       return;
     }
 
-    const elapsed = effectiveElapsed(now);
-    const t = elapsed/1000;
+    // Audio-clock driven. Frame jank cannot warp the pacer.
+    const t = audioNow();           // seconds
+    const elapsed = t * 1000;       // ms
     ctx.clearRect(0,0,W,H);
 
     const cx = W/2, cy = H/2;
     const baseR = Math.min(W,H)*0.22;
     const trans = Math.max(0, Math.min(1, (elapsed - 58000)/4000));
+
+    // Drive breath-phase label from the audio clock (Phase 1 only)
+    if(trans < 1){
+      const cycSec = (elapsed % CYCLE_MS)/1000;
+      const idx = cycSec < 4 ? 0 : (cycSec < 6 ? 1 : 2);
+      if(idx !== lastPhaseIdx){
+        lastPhaseIdx = idx;
+        const P = PHASES[idx];
+        phaseLbl.textContent = P.name;
+        phaseSub.textContent = P.sub;
+      }
+    }
+
 
     // ------- Phase 1: Breathing aura -------
     if(trans < 1){
@@ -376,18 +395,19 @@
     scheduleThunder();
   }
 
+  // Schedule thunder on the AUDIO clock. .start(startAt) is sample-accurate;
+  // the setTimeout only re-arms the next call and tolerates jank.
   function scheduleThunder(){
     if(!audioCtx) return;
-    const delay = 15000 + Math.random()*15000; // 15-30s
-    thunderTimer = setTimeout(()=>{
-      triggerThunder();
-      scheduleThunder();
-    }, delay);
+    const delaySec = 15 + Math.random()*15; // 15-30s
+    const startAt = audioCtx.currentTime + delaySec;
+    triggerThunder(startAt);
+    thunderTimer = setTimeout(scheduleThunder, delaySec*1000 + 50);
   }
 
-  function triggerThunder(){
+  function triggerThunder(startAt){
     if(!audioCtx) return;
-    const now = audioCtx.currentTime;
+    const now = (typeof startAt === 'number') ? startAt : audioCtx.currentTime;
     const dur = 6 + Math.random()*8; // 6-14s rolling rumble
     const baseFreq = 28 + Math.random()*18; // 28-46Hz
     const peak = 0.35 + Math.random()*0.45; // volume variance
@@ -473,30 +493,29 @@
     }catch(e){}
   }
 
-  // ---------- Phase loop ----------
-  let phaseTimer=null;
+  // ---------- Phase labels (audio-clock driven; updated by draw()) ----------
   const PHASES = [
     {name:'Breathe In', sub:'4s'},
     {name:'Hold',       sub:'2s'},
     {name:'Breathe Out',sub:'4s'},
   ];
-  function runPhase(i){
-    const p = PHASES[i];
-    phaseLbl.textContent = p.name;
-    phaseSub.textContent = p.sub;
-    const dur = i===1 ? 2000 : 4000;
-    phaseTimer = setTimeout(()=>runPhase((i+1)%PHASES.length), dur);
-  }
 
   function fmt(ms){
     const s = Math.max(0, Math.ceil(ms/1000));
     const m = Math.floor(s/60), r = s%60;
     return m+':' + String(r).padStart(2,'0');
   }
+  // Timer polls the audio clock. setTimeout drift doesn't matter — we always
+  // ask the AudioContext for ground truth, so the readout self-corrects.
   function tick(){
-    const elapsed = effectiveElapsed(performance.now());
+    const elapsed = audioNow()*1000;
     const left = SESSION_MS - elapsed;
     timerEl.textContent = fmt(left);
+    // Fade phase-text + bring pad in once breathing window closes (audio-clock).
+    if(!droneFaded && elapsed >= BREATH_MS){
+      droneFaded = true;
+      phaseEl.classList.remove('show');
+    }
     if(left<=0){ endSession(); return; }
     tickTimer = setTimeout(tick, 250);
   }
@@ -513,34 +532,29 @@
     }, 400);
     buildAudio();
     sessionStart = performance.now();
-    elapsedAccum = 0;
-    lastResumeAt = sessionStart;
+    audioStartTime = audioCtx.currentTime;
+    lastPhaseIdx = -1;
+    droneFaded = false;
     touching = false;
     visDim = 0; visDimTarget = 0;
     timerEl.textContent = '5:00';
     resize();
-    runPhase(0);
     tick();
     rafId = requestAnimationFrame(draw);
 
-    droneTimer = setTimeout(()=>{
-      phaseEl.classList.remove('show');
-      // bring pad in
-      if(audioCtx && padGain){
-        const now = audioCtx.currentTime;
-        padGain.gain.cancelScheduledValues(now);
-        padGain.gain.setValueAtTime(padGain.gain.value, now);
-        padGain.gain.linearRampToValueAtTime(0.32, now+10);
-      }
-    }, BREATH_MS);
-
-    masterTimer = setTimeout(endSession, SESSION_MS);
+    // Pre-schedule pad fade-in directly on the AUDIO clock (sample-accurate).
+    if(padGain){
+      const padInAt = audioStartTime + (BREATH_MS/1000);
+      padGain.gain.setValueAtTime(0.0, padInAt);
+      padGain.gain.linearRampToValueAtTime(0.32, padInAt + 10);
+    }
   }
+
 
   function endSession(){
     if(ended) return;
     ended = true;
-    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
+    clearTimeout(tickTimer); clearTimeout(thunderTimer);
     fade.classList.add('on');
     killAudio();
     setTimeout(()=>{
@@ -549,7 +563,7 @@
   }
 
   function stopSession(){
-    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
+    clearTimeout(tickTimer); clearTimeout(thunderTimer);
     cancelAnimationFrame(rafId); rafId=null;
     killAudio();
     session.classList.remove('on');
@@ -568,12 +582,13 @@
   stopBtn.addEventListener('touchend', (e)=>{ e.stopPropagation(); e.preventDefault(); stopSession(); });
 
   // ---------- Touch-to-play gating ----------
+  // Pacer rhythm runs on the audio clock independent of touch — finger lift only
+  // mutes audio + dims visuals. Re-touch picks back up in perfect phase.
   function onDown(e){
     if(!running||ended) return;
     if(e.target === stopBtn) return;
     if(touching) return;
     touching = true;
-    lastResumeAt = performance.now();
     visDimTarget = 1;
     audioOn();
     if(!rafId) rafId = requestAnimationFrame(draw);
@@ -582,7 +597,6 @@
     if(!running||ended) return;
     if(!touching) return;
     touching = false;
-    elapsedAccum += performance.now() - lastResumeAt;
     visDimTarget = 0;
     audioOff();
   }
