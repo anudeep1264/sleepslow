@@ -227,10 +227,12 @@
       ctx.fillStyle = g2;
       ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
 
-      // faint amber ember rim
-      ctx.lineWidth = 1.1;
-      ctx.strokeStyle = `rgba(80,75,70,${0.16*a1})`;
-      ctx.beginPath(); ctx.arc(cx,cy,r*1.06,0,Math.PI*2); ctx.stroke();
+      // faint amber ember rim — skip under load
+      if(quality > 0.6){
+        ctx.lineWidth = 1.1;
+        ctx.strokeStyle = `rgba(80,75,70,${0.16*a1})`;
+        ctx.beginPath(); ctx.arc(cx,cy,r*1.06,0,Math.PI*2); ctx.stroke();
+      }
     }
 
     // ------- Phase 2: Hypnotic pendulum (synced w/ 8D audio) -------
