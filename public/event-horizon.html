@@ -395,13 +395,14 @@
     scheduleThunder();
   }
 
+  // Schedule thunder on the AUDIO clock. .start(startAt) is sample-accurate;
+  // the setTimeout only re-arms the next call and tolerates jank.
   function scheduleThunder(){
     if(!audioCtx) return;
-    const delay = 15000 + Math.random()*15000; // 15-30s
-    thunderTimer = setTimeout(()=>{
-      triggerThunder();
-      scheduleThunder();
-    }, delay);
+    const delaySec = 15 + Math.random()*15; // 15-30s
+    const startAt = audioCtx.currentTime + delaySec;
+    triggerThunder(startAt);
+    thunderTimer = setTimeout(scheduleThunder, delaySec*1000 + 50);
   }
 
   function triggerThunder(){
