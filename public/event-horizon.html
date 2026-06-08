@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#000000" />
-<title>Hypnotic Pacemaker · 5 Minute Sleep</title>
+<title>Distant Thunder · 5 Minute Sleep</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
   html,body{width:100%;height:100%;background:#000;color:#4a4a4a;
@@ -19,64 +19,71 @@
   .brand{position:absolute;top:9vh;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.55em;
     text-transform:uppercase;color:#3a3a3a;font-weight:300}
   .brand b{color:#6a6a6a;font-weight:400}
-  #enterBtn{position:relative;width:240px;height:240px;border-radius:50%;border:1px solid rgba(120,130,140,.16);
+  #enterBtn{position:relative;width:240px;height:240px;border-radius:50%;border:1px solid rgba(80,95,120,.16);
     background:radial-gradient(circle at 50% 50%,
-      rgba(26,35,50,.65) 0%,
-      rgba(44,53,49,.4) 45%,
-      rgba(20,24,28,.15) 75%,
+      rgba(10,17,40,.75) 0%,
+      rgba(28,37,65,.5) 45%,
+      rgba(35,31,32,.18) 75%,
       rgba(0,0,0,0) 90%);
     color:#7a7a7a;font-size:10px;letter-spacing:.5em;font-weight:300;cursor:pointer;outline:none;
-    box-shadow:0 0 80px 10px rgba(26,35,50,.35), inset 0 0 60px rgba(44,53,49,.22);
+    box-shadow:0 0 90px 12px rgba(10,17,40,.4), inset 0 0 60px rgba(28,37,65,.25);
     animation:landPulse 7s ease-in-out infinite;transition:transform .8s ease,opacity 1s ease}
   #enterBtn:active{transform:scale(.97)}
   @keyframes landPulse{
-    0%,100%{box-shadow:0 0 80px 10px rgba(26,35,50,.3), inset 0 0 60px rgba(44,53,49,.2);transform:scale(1)}
-    50%{box-shadow:0 0 130px 20px rgba(26,35,50,.5), inset 0 0 80px rgba(44,53,49,.3);transform:scale(1.03)}
+    0%,100%{box-shadow:0 0 90px 12px rgba(10,17,40,.35), inset 0 0 60px rgba(28,37,65,.22);transform:scale(1)}
+    50%{box-shadow:0 0 140px 22px rgba(10,17,40,.55), inset 0 0 80px rgba(28,37,65,.32);transform:scale(1.03)}
   }
   .disclaimer{position:absolute;bottom:7vh;left:24px;right:24px;text-align:center;font-size:9.5px;line-height:1.85;
     color:#2e2e2e;letter-spacing:.12em;max-width:340px;margin:0 auto}
 
   /* Session */
-  #session{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 2.4s ease;z-index:5}
+  #session{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 1.6s ease;z-index:5}
   #session.on{opacity:1;pointer-events:auto}
+  #session.dim{opacity:0;transition:opacity .25s ease}
 
   canvas#viz{position:absolute;inset:0;width:100%;height:100%;display:block}
 
   .phase-text{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;
     font-size:10.5px;letter-spacing:.6em;text-transform:uppercase;color:#555;font-weight:300;
-    pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity 2s ease;
+    pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity 1.4s ease;
     text-shadow:0 0 24px rgba(0,0,0,.95)}
-  .phase-text.show{opacity:.78}
-  .phase-text .label{display:block;margin-top:34vmin;font-size:10px;color:#555}
-  .phase-text .sub{display:block;margin-top:8px;font-size:8.5px;color:#333;letter-spacing:.4em}
+  .phase-text.show{opacity:.72}
+  .phase-text .label{display:block;margin-top:34vmin;font-size:10px;color:#4a4a4a}
+  .phase-text .sub{display:block;margin-top:8px;font-size:8.5px;color:#2f2f2f;letter-spacing:.4em}
+
+  .hint{position:absolute;top:max(40px,env(safe-area-inset-top));left:0;right:0;text-align:center;
+    font-size:8.5px;letter-spacing:.5em;color:#2a2a2a;font-weight:300;text-transform:uppercase;
+    opacity:0;transition:opacity 1s ease;pointer-events:none}
+  .hint.show{opacity:.9}
 
   .timer{position:absolute;bottom:max(70px,calc(env(safe-area-inset-bottom) + 70px));left:0;right:0;text-align:center;
-    font-size:9.5px;letter-spacing:.5em;color:#333;font-variant-numeric:tabular-nums;font-weight:300}
+    font-size:9.5px;letter-spacing:.5em;color:#2e2e2e;font-variant-numeric:tabular-nums;font-weight:300}
 
   #stopBtn{position:absolute;bottom:max(28px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
-    background:transparent;border:1px solid rgba(85,85,85,.16);color:#444;
+    background:transparent;border:1px solid rgba(85,85,85,.14);color:#3a3a3a;
     padding:9px 22px;border-radius:999px;font-size:9px;letter-spacing:.45em;text-transform:uppercase;
     cursor:pointer;transition:all .4s ease;font-weight:300}
   #stopBtn:active{background:rgba(255,255,255,.02);color:#666}
 
   #fadeOut{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;
-    transition:opacity 5s ease;z-index:20}
+    transition:opacity 2.5s ease;z-index:20}
   #fadeOut.on{opacity:1}
 </style>
 </head>
 <body>
 <div id="stage">
   <div id="landing">
-    <div class="brand">Hypnotic · <b>Pacemaker</b></div>
+    <div class="brand">Distant · <b>Thunder</b></div>
     <button id="enterBtn">BEGIN · 5 MIN</button>
     <p class="disclaimer">
-      One minute of paced breathing, then four minutes of 8D delta entrainment.
-      Use headphones. For relaxation only — not a medical device.
+      Hold your thumb on the screen. Release to silence everything instantly.
+      Headphones recommended. For relaxation only — not a medical device.
     </p>
   </div>
 
   <div id="session">
     <canvas id="viz"></canvas>
+    <div class="hint" id="hint">Rest your thumb on the screen</div>
     <div class="phase-text" id="phase">
       <span class="label" id="phaseLbl">Breathe In</span>
       <span class="sub" id="phaseSub">4 · 2 · 4</span>
@@ -97,28 +104,28 @@
   const phaseEl = document.getElementById('phase');
   const phaseLbl = document.getElementById('phaseLbl');
   const phaseSub = document.getElementById('phaseSub');
+  const hintEl = document.getElementById('hint');
   const timerEl = document.getElementById('timer');
   const fade = document.getElementById('fadeOut');
   const canvas = document.getElementById('viz');
   const ctx = canvas.getContext('2d');
 
   const SESSION_MS = 5*60*1000;
-  const BREATH_MS  = 1*60*1000;     // Phase 1 length
-  // 4s inhale, 2s hold, 4s exhale, 2s hold (total 12s? spec says 4/2/4 - we'll do 4-2-4-2 loop = 12s, hold-bot to keep symmetry hidden)
-  // Spec: 4 inhale, 2 hold, 4 exhale. Loop = 10s.
-  const CYCLE_MS = 10000;
-  const PHASES = [
-    {name:'Breathe In', sub:'4s', dur:4000, kind:'in'},
-    {name:'Hold',       sub:'2s', dur:2000, kind:'hold'},
-    {name:'Breathe Out',sub:'4s', dur:4000, kind:'out'},
-  ];
+  const BREATH_MS  = 60*1000;
+  const CYCLE_MS = 10000; // 4 in / 2 hold / 4 out
+  const PAN_PERIOD = 7;   // seconds, 8D panning period
 
-  // Audio nodes
-  let audioCtx, masterGain, oscL, oscR, gL, gR, noiseSrc, noiseGain,
-      droneGain, panner, lfo, lfoGain, droneOscs = [];
-  let sessionStart = 0, masterTimer = null, phaseTimer = null, tickTimer = null,
-      liftTimer = null, droneTimer = null;
-  let running = false, ended = false;
+  // Audio graph
+  let audioCtx=null, masterGain, touchGain;
+  let binL, binR, binGainL, binGainR;
+  let rainSrc, rainFilter, rainGain;
+  let padOscs=[], padGain, padPanner, padLFO, padLFOGain;
+  let thunderTimer=null;
+
+  // Session state
+  let sessionStart=0, elapsedAccum=0, lastResumeAt=0;
+  let masterTimer=null, droneTimer=null, tickTimer=null;
+  let running=false, ended=false, touching=false;
 
   // ---------- Canvas ----------
   let W=0,H=0,DPR=1;
@@ -130,97 +137,123 @@
   }
   window.addEventListener('resize', resize);
 
-  let rafId = null;
-  let t0 = 0;
+  let rafId=null;
+  // visual dim factor (0 = black, 1 = full). Smoothly eased toward target.
+  let visDim = 0, visDimTarget = 0;
+  // frozen pendulum state when touch lifted
+  let lastPhaseFraction = 0;
+
+  function effectiveElapsed(now){
+    // counts only time while touching
+    if(touching) return elapsedAccum + (now - lastResumeAt);
+    return elapsedAccum;
+  }
+
   function draw(now){
-    if(!running||ended) return;
-    const t = (now - t0)/1000; // seconds since session start
-    const elapsed = now - sessionStart;
+    if(!running||ended){ rafId=null; return; }
+    // ease dim toward target
+    visDim += (visDimTarget - visDim) * 0.18;
+    if(visDim < 0.001 && visDimTarget === 0){
+      ctx.clearRect(0,0,W,H);
+      rafId = requestAnimationFrame(draw);
+      return;
+    }
+
+    const elapsed = effectiveElapsed(now);
+    const t = elapsed/1000;
     ctx.clearRect(0,0,W,H);
 
     const cx = W/2, cy = H/2;
     const baseR = Math.min(W,H)*0.22;
-
-    // Smooth transition factor 0..1 between phase 1 (aura) and phase 2 (ripples)
-    // Transition window 58s..62s
     const trans = Math.max(0, Math.min(1, (elapsed - 58000)/4000));
 
     // ------- Phase 1: Breathing aura -------
     if(trans < 1){
-      // breath progress through current cycle
       const cyc = (elapsed % CYCLE_MS)/1000;
       let scale = 0.78;
-      if(cyc < 4){ // inhale ease in/out
+      if(cyc < 4){
         const p = cyc/4;
         const e = 0.5 - 0.5*Math.cos(p*Math.PI);
         scale = 0.78 + 0.42*e;
-      } else if(cyc < 6){ // hold top
+      } else if(cyc < 6){
         scale = 1.20;
-      } else { // exhale
+      } else {
         const p = (cyc-6)/4;
         const e = 0.5 - 0.5*Math.cos(p*Math.PI);
         scale = 1.20 - 0.42*e;
       }
       const r = baseR * scale;
+      const a1 = (1-trans) * visDim;
 
-      const a1 = (1-trans);
-      // outer glow
       const g1 = ctx.createRadialGradient(cx,cy,r*0.2, cx,cy, r*2.4);
-      g1.addColorStop(0, `rgba(44,53,49,${0.55*a1})`);
-      g1.addColorStop(0.35, `rgba(26,35,50,${0.35*a1})`);
+      g1.addColorStop(0, `rgba(28,37,65,${0.55*a1})`);
+      g1.addColorStop(0.35, `rgba(10,17,40,${0.4*a1})`);
       g1.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = g1;
       ctx.beginPath(); ctx.arc(cx,cy,r*2.4,0,Math.PI*2); ctx.fill();
 
-      // inner orb
       const g2 = ctx.createRadialGradient(cx- r*0.15, cy- r*0.18, r*0.1, cx,cy, r);
-      g2.addColorStop(0, `rgba(70,86,102,${0.85*a1})`);
-      g2.addColorStop(0.4, `rgba(44,53,49,${0.6*a1})`);
-      g2.addColorStop(1, `rgba(12,16,22,${0.05*a1})`);
+      g2.addColorStop(0, `rgba(60,75,110,${0.78*a1})`);
+      g2.addColorStop(0.45, `rgba(28,37,65,${0.55*a1})`);
+      g2.addColorStop(1, `rgba(10,12,18,${0.05*a1})`);
       ctx.fillStyle = g2;
       ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
 
-      // ring stroke
+      // faint amber ember rim
       ctx.lineWidth = 1.1;
-      ctx.strokeStyle = `rgba(120,140,160,${0.12*a1})`;
+      ctx.strokeStyle = `rgba(80,75,70,${0.16*a1})`;
       ctx.beginPath(); ctx.arc(cx,cy,r*1.06,0,Math.PI*2); ctx.stroke();
     }
 
-    // ------- Phase 2: Concentric expanding ripples -------
+    // ------- Phase 2: Hypnotic pendulum (synced w/ 8D audio) -------
     if(trans > 0){
-      const a2 = trans;
-      const ringCount = 6;
-      const period = 6.0; // seconds for a ring to travel out
-      const maxR = Math.min(W,H)*0.55;
-      for(let i=0;i<ringCount;i++){
-        const phase = ((t/period) + i/ringCount) % 1;
-        const r = baseR*0.35 + phase * (maxR - baseR*0.35);
-        // fade in then out
-        const env = Math.sin(phase*Math.PI); // 0..1..0
-        const alpha = 0.22 * env * a2;
-        ctx.lineWidth = 1.2;
-        ctx.strokeStyle = `rgba(120,140,160,${alpha})`;
-        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+      const a2 = trans * visDim;
+      // pendulum phase fraction matches audio LFO (period = PAN_PERIOD seconds)
+      let phaseFrac;
+      if(touching){
+        phaseFrac = (t / PAN_PERIOD) % 1;
+        lastPhaseFraction = phaseFrac;
+      } else {
+        phaseFrac = lastPhaseFraction;
+      }
+      const ang = phaseFrac * Math.PI * 2;
+      const swingRange = Math.min(W*0.36, 220);
+      const x = cx + Math.sin(ang) * swingRange;
+      const y = cy + Math.cos(ang*2) * 6; // tiny vertical bob
 
-        // soft inner fill on innermost ring
-        if(i===0){
-          const g = ctx.createRadialGradient(cx,cy,0, cx,cy, r);
-          g.addColorStop(0, `rgba(44,53,49,${0.35*a2*env})`);
-          g.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = g;
-          ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
-        }
+      // trail
+      const trailSteps = 8;
+      for(let i=trailSteps;i>=1;i--){
+        const tf = (phaseFrac - i*0.012 + 1) % 1;
+        const a = tf * Math.PI * 2;
+        const tx = cx + Math.sin(a) * swingRange;
+        const ty = cy + Math.cos(a*2) * 6;
+        const tr = baseR * 0.16 * (1 - i/trailSteps*0.55);
+        const ta = 0.18 * (1 - i/trailSteps) * a2;
+        const gg = ctx.createRadialGradient(tx,ty,0, tx,ty, tr*2.2);
+        gg.addColorStop(0, `rgba(35,31,32,${ta*0.5})`);
+        gg.addColorStop(0.4, `rgba(28,37,65,${ta})`);
+        gg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gg;
+        ctx.beginPath(); ctx.arc(tx,ty,tr*2.2,0,Math.PI*2); ctx.fill();
       }
 
-      // central anchor dot — slowly drifts horizontally as a "pendulum" anchor
-      const swing = Math.sin(t * (2*Math.PI*0.15)) * Math.min(W,H)*0.04;
-      const cr = baseR*0.18;
-      const gC = ctx.createRadialGradient(cx+swing,cy, 0, cx+swing,cy, cr);
-      gC.addColorStop(0, `rgba(90,110,130,${0.85*a2})`);
-      gC.addColorStop(0.5, `rgba(44,53,49,${0.5*a2})`);
-      gC.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = gC;
-      ctx.beginPath(); ctx.arc(cx+swing,cy,cr,0,Math.PI*2); ctx.fill();
+      // arc guide
+      ctx.lineWidth = 0.7;
+      ctx.strokeStyle = `rgba(60,72,95,${0.10*a2})`;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, swingRange, 14, 0, 0, Math.PI*2);
+      ctx.stroke();
+
+      // pendulum orb
+      const orbR = baseR*0.20;
+      const og = ctx.createRadialGradient(x-orbR*0.2, y-orbR*0.25, 0, x, y, orbR*2.0);
+      og.addColorStop(0, `rgba(80,95,120,${0.85*a2})`);
+      og.addColorStop(0.35, `rgba(28,37,65,${0.6*a2})`);
+      og.addColorStop(0.75, `rgba(35,31,32,${0.18*a2})`);
+      og.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = og;
+      ctx.beginPath(); ctx.arc(x,y,orbR*2.0,0,Math.PI*2); ctx.fill();
     }
 
     rafId = requestAnimationFrame(draw);
@@ -229,105 +262,198 @@
   // ---------- Audio ----------
   function buildAudio(){
     audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0;
-    masterGain.connect(audioCtx.destination);
+    masterGain = audioCtx.createGain(); masterGain.gain.value = 0;
+    // touchGain is fully muted when finger off; instant response
+    touchGain = audioCtx.createGain(); touchGain.gain.value = 0;
+    touchGain.connect(masterGain).connect(audioCtx.destination);
 
-    // Binaural 100/104 -> 4Hz delta
+    // ---- Binaural 90 / 91.8 Hz (1.8Hz delta) ----
     const merger = audioCtx.createChannelMerger(2);
-    oscL = audioCtx.createOscillator(); oscL.type='sine'; oscL.frequency.value=100;
-    oscR = audioCtx.createOscillator(); oscR.type='sine'; oscR.frequency.value=104;
-    gL = audioCtx.createGain(); gL.gain.value=0.11;
-    gR = audioCtx.createGain(); gR.gain.value=0.11;
-    oscL.connect(gL).connect(merger,0,0);
-    oscR.connect(gR).connect(merger,0,1);
-    merger.connect(masterGain);
-    oscL.start(); oscR.start();
+    binL = audioCtx.createOscillator(); binL.type='sine'; binL.frequency.value=90;
+    binR = audioCtx.createOscillator(); binR.type='sine'; binR.frequency.value=91.8;
+    binGainL = audioCtx.createGain(); binGainL.gain.value=0.09;
+    binGainR = audioCtx.createGain(); binGainR.gain.value=0.09;
+    binL.connect(binGainL).connect(merger,0,0);
+    binR.connect(binGainR).connect(merger,0,1);
+    merger.connect(touchGain);
+    binL.start(); binR.start();
 
-    // Brown noise floor
+    // ---- Rain layer (pink/white noise -> heavy LP) ----
     const sr = audioCtx.sampleRate;
-    const buf = audioCtx.createBuffer(1, sr*4, sr);
-    const d = buf.getChannelData(0);
-    let last = 0;
-    for(let i=0;i<d.length;i++){
-      const w = Math.random()*2-1;
-      last = (last + 0.02*w)/1.02;
-      d[i] = last*3.5;
+    const rbuf = audioCtx.createBuffer(2, sr*5, sr);
+    for(let ch=0; ch<2; ch++){
+      const d = rbuf.getChannelData(ch);
+      // pink-ish noise via Voss-McCartney-lite
+      let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+      for(let i=0;i<d.length;i++){
+        const white = Math.random()*2-1;
+        b0 = 0.99886*b0 + white*0.0555179;
+        b1 = 0.99332*b1 + white*0.0750759;
+        b2 = 0.96900*b2 + white*0.1538520;
+        b3 = 0.86650*b3 + white*0.3104856;
+        b4 = 0.55000*b4 + white*0.5329522;
+        b5 = -0.7616*b5 - white*0.0168980;
+        const pink = (b0+b1+b2+b3+b4+b5+b6 + white*0.5362)*0.11;
+        b6 = white*0.115926;
+        // mix a touch of white for "hiss-as-droplets"
+        d[i] = pink*0.85 + (Math.random()*2-1)*0.05;
+      }
     }
-    noiseSrc = audioCtx.createBufferSource();
-    noiseSrc.buffer = buf; noiseSrc.loop = true;
-    const lp = audioCtx.createBiquadFilter();
-    lp.type='lowpass'; lp.frequency.value=320;
-    noiseGain = audioCtx.createGain(); noiseGain.gain.value=0.10;
-    noiseSrc.connect(lp).connect(noiseGain).connect(masterGain);
-    noiseSrc.start();
+    rainSrc = audioCtx.createBufferSource();
+    rainSrc.buffer = rbuf; rainSrc.loop = true;
+    rainFilter = audioCtx.createBiquadFilter();
+    rainFilter.type='lowpass'; rainFilter.frequency.value = 1100; rainFilter.Q.value = 0.6;
+    const rainHP = audioCtx.createBiquadFilter();
+    rainHP.type='highpass'; rainHP.frequency.value = 120;
+    rainGain = audioCtx.createGain(); rainGain.gain.value = 0.32;
+    rainSrc.connect(rainFilter).connect(rainHP).connect(rainGain).connect(touchGain);
+    rainSrc.start();
 
-    // 8D drone chain (silent until phase 2)
-    panner = audioCtx.createStereoPanner();
-    panner.pan.value = 0;
-    droneGain = audioCtx.createGain(); droneGain.gain.value = 0.0;
-    const droneFilter = audioCtx.createBiquadFilter();
-    droneFilter.type='lowpass'; droneFilter.frequency.value=950;
-
-    // crystal singing bowl: stacked sines
-    const freqs = [196, 294, 392.4, 587];
-    freqs.forEach((f,i)=>{
+    // ---- Ambient pad with 8D LFO panning (7s period) ----
+    padPanner = audioCtx.createStereoPanner();
+    padGain = audioCtx.createGain(); padGain.gain.value = 0.0; // ramps in
+    const padFilter = audioCtx.createBiquadFilter();
+    padFilter.type='lowpass'; padFilter.frequency.value=780;
+    const padFreqs = [110, 164.81, 220, 329.63]; // A2, E3, A3, E4 — open fifth pad
+    padFreqs.forEach((f,i)=>{
       const o = audioCtx.createOscillator();
-      o.type = 'sine';
-      o.frequency.value = f;
-      const g = audioCtx.createGain();
-      g.gain.value = 0.12 / (i+1);
-      o.connect(g).connect(droneFilter);
+      o.type='sine'; o.frequency.value = f;
+      const g = audioCtx.createGain(); g.gain.value = 0.10/(i*0.6+1);
+      // very slow detune wobble for organic feel
+      const det = audioCtx.createOscillator();
+      det.type='sine'; det.frequency.value = 0.05 + i*0.013;
+      const detG = audioCtx.createGain(); detG.gain.value = 1.2;
+      det.connect(detG).connect(o.detune); det.start();
+      o.connect(g).connect(padFilter);
       o.start();
-      droneOscs.push(o);
+      padOscs.push(o);
     });
-    droneFilter.connect(droneGain).connect(panner).connect(masterGain);
+    padFilter.connect(padGain).connect(padPanner).connect(touchGain);
 
-    // 8D LFO: 0.15Hz pan sweep
-    lfo = audioCtx.createOscillator();
-    lfo.type='sine';
-    lfo.frequency.value = 0.15;
-    lfoGain = audioCtx.createGain();
-    lfoGain.gain.value = 0.95;
-    lfo.connect(lfoGain).connect(panner.pan);
-    lfo.start();
+    padLFO = audioCtx.createOscillator(); padLFO.type='sine';
+    padLFO.frequency.value = 1/PAN_PERIOD;
+    padLFOGain = audioCtx.createGain(); padLFOGain.gain.value = 0.92;
+    padLFO.connect(padLFOGain).connect(padPanner.pan);
+    padLFO.start();
 
-    // master fade in
+    // master fade-in (touchGain will gate)
     const now = audioCtx.currentTime;
     masterGain.gain.setValueAtTime(0, now);
-    masterGain.gain.linearRampToValueAtTime(0.9, now+5);
+    masterGain.gain.linearRampToValueAtTime(0.95, now+4);
+
+    scheduleThunder();
   }
 
-  function introduceDrone(){
-    if(!audioCtx || !droneGain) return;
-    const now = audioCtx.currentTime;
-    droneGain.gain.cancelScheduledValues(now);
-    droneGain.gain.setValueAtTime(droneGain.gain.value, now);
-    droneGain.gain.linearRampToValueAtTime(0.35, now + 12);
+  function scheduleThunder(){
+    if(!audioCtx) return;
+    const delay = 15000 + Math.random()*15000; // 15-30s
+    thunderTimer = setTimeout(()=>{
+      triggerThunder();
+      scheduleThunder();
+    }, delay);
   }
 
-  function fadeAudioOut(seconds){
+  function triggerThunder(){
     if(!audioCtx) return;
     const now = audioCtx.currentTime;
-    masterGain.gain.cancelScheduledValues(now);
-    masterGain.gain.setValueAtTime(masterGain.gain.value, now);
-    masterGain.gain.linearRampToValueAtTime(0.0001, now+seconds);
+    const dur = 6 + Math.random()*8; // 6-14s rolling rumble
+    const baseFreq = 28 + Math.random()*18; // 28-46Hz
+    const peak = 0.35 + Math.random()*0.45; // volume variance
+
+    // sub oscillator
+    const o = audioCtx.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(baseFreq, now);
+    o.frequency.linearRampToValueAtTime(baseFreq*0.55, now+dur);
+
+    // detune partial for low growl
+    const o2 = audioCtx.createOscillator();
+    o2.type='triangle';
+    o2.frequency.setValueAtTime(baseFreq*1.5, now);
+    o2.frequency.linearRampToValueAtTime(baseFreq*0.8, now+dur);
+
+    const noiseBuf = audioCtx.createBuffer(1, audioCtx.sampleRate*dur, audioCtx.sampleRate);
+    const nd = noiseBuf.getChannelData(0);
+    let last=0;
+    for(let i=0;i<nd.length;i++){
+      const w = Math.random()*2-1;
+      last = (last + 0.018*w)/1.018; // brown
+      nd[i] = last*3.2;
+    }
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = noiseBuf;
+
+    const lp = audioCtx.createBiquadFilter();
+    lp.type='lowpass';
+    lp.frequency.setValueAtTime(180, now);
+    lp.frequency.linearRampToValueAtTime(70, now+dur);
+    lp.Q.value=0.7;
+
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.0001, now);
+    // organic envelope: slow swell, irregular plateau, long tail
+    const attack = 0.6 + Math.random()*1.4;
+    const hold   = dur*0.35;
+    g.gain.exponentialRampToValueAtTime(peak, now+attack);
+    // a couple of mid bumps
+    const bumps = 2 + Math.floor(Math.random()*3);
+    for(let i=1;i<=bumps;i++){
+      const tb = now + attack + (hold * i/(bumps+1));
+      g.gain.linearRampToValueAtTime(peak*(0.65 + Math.random()*0.4), tb);
+    }
+    g.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+
+    const pan = audioCtx.createStereoPanner();
+    pan.pan.value = (Math.random()*2-1)*0.6;
+
+    o.connect(g); o2.connect(g); noise.connect(lp).connect(g);
+    g.connect(pan).connect(touchGain);
+
+    o.start(now); o2.start(now); noise.start(now);
+    o.stop(now+dur+0.1); o2.stop(now+dur+0.1); noise.stop(now+dur+0.1);
+  }
+
+  function audioOn(){
+    if(!audioCtx) return;
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+    touchGain.gain.cancelScheduledValues(now);
+    touchGain.gain.setValueAtTime(touchGain.gain.value, now);
+    touchGain.gain.linearRampToValueAtTime(1.0, now+0.18);
+  }
+  function audioOff(){
+    if(!audioCtx) return;
+    const now = audioCtx.currentTime;
+    touchGain.gain.cancelScheduledValues(now);
+    touchGain.gain.setValueAtTime(touchGain.gain.value, now);
+    touchGain.gain.linearRampToValueAtTime(0.0001, now+0.2);
   }
 
   function killAudio(){
     if(!audioCtx) return;
+    clearTimeout(thunderTimer); thunderTimer=null;
     try{
-      fadeAudioOut(0.4);
-      setTimeout(()=>{ try{audioCtx.close()}catch(e){} audioCtx=null; }, 600);
+      const now = audioCtx.currentTime;
+      masterGain.gain.cancelScheduledValues(now);
+      masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+      masterGain.gain.linearRampToValueAtTime(0.0001, now+0.3);
+      setTimeout(()=>{ try{audioCtx.close()}catch(e){} audioCtx=null; }, 450);
     }catch(e){}
   }
 
   // ---------- Phase loop ----------
+  let phaseTimer=null;
+  const PHASES = [
+    {name:'Breathe In', sub:'4s'},
+    {name:'Hold',       sub:'2s'},
+    {name:'Breathe Out',sub:'4s'},
+  ];
   function runPhase(i){
     const p = PHASES[i];
     phaseLbl.textContent = p.name;
     phaseSub.textContent = p.sub;
-    phaseTimer = setTimeout(()=>runPhase((i+1)%PHASES.length), p.dur);
+    const dur = i===1 ? 2000 : 4000;
+    phaseTimer = setTimeout(()=>runPhase((i+1)%PHASES.length), dur);
   }
 
   function fmt(ms){
@@ -335,9 +461,8 @@
     const m = Math.floor(s/60), r = s%60;
     return m+':' + String(r).padStart(2,'0');
   }
-
   function tick(){
-    const elapsed = performance.now() - sessionStart;
+    const elapsed = effectiveElapsed(performance.now());
     const left = SESSION_MS - elapsed;
     timerEl.textContent = fmt(left);
     if(left<=0){ endSession(); return; }
@@ -351,20 +476,30 @@
     setTimeout(()=>{
       session.classList.add('on');
       phaseEl.classList.add('show');
+      hintEl.classList.add('show');
+      setTimeout(()=>hintEl.classList.remove('show'), 4500);
     }, 400);
     buildAudio();
     sessionStart = performance.now();
-    t0 = sessionStart;
+    elapsedAccum = 0;
+    lastResumeAt = sessionStart;
+    touching = false;
+    visDim = 0; visDimTarget = 0;
     timerEl.textContent = '5:00';
     resize();
     runPhase(0);
     tick();
     rafId = requestAnimationFrame(draw);
 
-    // At 1:00, fade out breathing text and bring in the drone
     droneTimer = setTimeout(()=>{
       phaseEl.classList.remove('show');
-      introduceDrone();
+      // bring pad in
+      if(audioCtx && padGain){
+        const now = audioCtx.currentTime;
+        padGain.gain.cancelScheduledValues(now);
+        padGain.gain.setValueAtTime(padGain.gain.value, now);
+        padGain.gain.linearRampToValueAtTime(0.32, now+10);
+      }
     }, BREATH_MS);
 
     masterTimer = setTimeout(endSession, SESSION_MS);
@@ -374,62 +509,61 @@
     if(ended) return;
     ended = true;
     clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
-    fadeAudioOut(5);
     fade.classList.add('on');
+    killAudio();
     setTimeout(()=>{
-      try{audioCtx&&audioCtx.close()}catch(e){} audioCtx=null;
-      cancelAnimationFrame(rafId);
-    }, 5200);
+      cancelAnimationFrame(rafId); rafId=null;
+    }, 2600);
   }
 
   function stopSession(){
     clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
-    clearTimeout(liftTimer); liftTimer=null;
-    cancelAnimationFrame(rafId);
+    cancelAnimationFrame(rafId); rafId=null;
     killAudio();
     session.classList.remove('on');
     phaseEl.classList.remove('show');
+    hintEl.classList.remove('show');
     fade.classList.remove('on');
     ctx.clearRect(0,0,W,H);
-    running = false; ended = false;
-    setTimeout(()=>{ landing.classList.remove('hidden'); }, 600);
+    running = false; ended = false; touching = false;
+    visDim = 0; visDimTarget = 0;
+    setTimeout(()=>{ landing.classList.remove('hidden'); }, 500);
   }
 
   enterBtn.addEventListener('click', startSession);
-  stopBtn.addEventListener('click', (e)=>{ e.stopPropagation(); stopSession(); });
+  stopBtn.addEventListener('click', (e)=>{ e.stopPropagation(); e.preventDefault(); stopSession(); });
+  stopBtn.addEventListener('touchstart', (e)=>{ e.stopPropagation(); }, {passive:true});
+  stopBtn.addEventListener('touchend', (e)=>{ e.stopPropagation(); e.preventDefault(); stopSession(); });
 
-  // Touch-hold safety
-  function onTouchStart(){
+  // ---------- Touch-to-play gating ----------
+  function onDown(e){
     if(!running||ended) return;
-    if(liftTimer){ clearTimeout(liftTimer); liftTimer=null; }
-    if(fade.classList.contains('on')){
-      fade.classList.remove('on');
-      if(audioCtx){
-        const now = audioCtx.currentTime;
-        masterGain.gain.cancelScheduledValues(now);
-        masterGain.gain.setValueAtTime(masterGain.gain.value, now);
-        masterGain.gain.linearRampToValueAtTime(0.9, now+2);
-      }
-    }
+    if(e.target === stopBtn) return;
+    if(touching) return;
+    touching = true;
+    lastResumeAt = performance.now();
+    visDimTarget = 1;
+    audioOn();
+    if(!rafId) rafId = requestAnimationFrame(draw);
   }
-  function onTouchEnd(){
+  function onUp(){
     if(!running||ended) return;
-    if(liftTimer) clearTimeout(liftTimer);
-    liftTimer = setTimeout(()=>{
-      fade.classList.add('on');
-      fadeAudioOut(5);
-    }, 0);
+    if(!touching) return;
+    touching = false;
+    elapsedAccum += performance.now() - lastResumeAt;
+    visDimTarget = 0;
+    audioOff();
   }
-  session.addEventListener('touchstart', onTouchStart, {passive:true});
-  session.addEventListener('touchend', onTouchEnd, {passive:true});
-  session.addEventListener('touchcancel', onTouchEnd, {passive:true});
-  session.addEventListener('mousedown', onTouchStart);
-  session.addEventListener('mouseup', onTouchEnd);
+  session.addEventListener('touchstart', onDown, {passive:true});
+  session.addEventListener('touchend', onUp, {passive:true});
+  session.addEventListener('touchcancel', onUp, {passive:true});
+  session.addEventListener('mousedown', onDown);
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('blur', onUp);
 
   document.addEventListener('gesturestart', e=>e.preventDefault());
   document.addEventListener('dblclick', e=>e.preventDefault());
 
-  // initial size
   resize();
 })();
 </script>
