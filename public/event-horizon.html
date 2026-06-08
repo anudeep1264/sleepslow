@@ -554,7 +554,7 @@
   function endSession(){
     if(ended) return;
     ended = true;
-    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
+    clearTimeout(tickTimer); clearTimeout(thunderTimer);
     fade.classList.add('on');
     killAudio();
     setTimeout(()=>{
@@ -563,7 +563,7 @@
   }
 
   function stopSession(){
-    clearTimeout(masterTimer); clearTimeout(phaseTimer); clearTimeout(tickTimer); clearTimeout(droneTimer);
+    clearTimeout(tickTimer); clearTimeout(thunderTimer);
     cancelAnimationFrame(rafId); rafId=null;
     killAudio();
     session.classList.remove('on');
@@ -582,12 +582,13 @@
   stopBtn.addEventListener('touchend', (e)=>{ e.stopPropagation(); e.preventDefault(); stopSession(); });
 
   // ---------- Touch-to-play gating ----------
+  // Pacer rhythm runs on the audio clock independent of touch — finger lift only
+  // mutes audio + dims visuals. Re-touch picks back up in perfect phase.
   function onDown(e){
     if(!running||ended) return;
     if(e.target === stopBtn) return;
     if(touching) return;
     touching = true;
-    lastResumeAt = performance.now();
     visDimTarget = 1;
     audioOn();
     if(!rafId) rafId = requestAnimationFrame(draw);
@@ -596,7 +597,6 @@
     if(!running||ended) return;
     if(!touching) return;
     touching = false;
-    elapsedAccum += performance.now() - lastResumeAt;
     visDimTarget = 0;
     audioOff();
   }
