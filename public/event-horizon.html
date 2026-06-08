@@ -128,9 +128,23 @@
   let running=false, ended=false, touching=false;
 
   // ---------- Canvas ----------
-  let W=0,H=0,DPR=1;
+  let W=0,H=0,DPR=1, MAX_DPR=1;
+  // Adaptive quality 0..1 (1 = full fidelity). Lowered when frame time spikes.
+  let quality = 1, frameAvg = 16.7, lastFrameTs = 0;
+  // Budgets: target 60fps (16.7ms). Above 22ms → degrade. Below 15ms → recover.
+  const FT_DEGRADE = 22, FT_RECOVER = 15;
+
+  function applyDPR(){
+    const targetDPR = Math.max(1, MAX_DPR * (0.65 + 0.35*quality));
+    if(Math.abs(targetDPR - DPR) > 0.05){
+      DPR = targetDPR;
+      canvas.width = W*DPR; canvas.height = H*DPR;
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+  }
   function resize(){
-    DPR = Math.min(window.devicePixelRatio||1, 2);
+    MAX_DPR = Math.min(window.devicePixelRatio||1, 2);
+    DPR = Math.max(1, MAX_DPR * (0.65 + 0.35*quality));
     W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = W*DPR; canvas.height = H*DPR;
     ctx.setTransform(DPR,0,0,DPR,0,0);
@@ -138,20 +152,34 @@
   window.addEventListener('resize', resize);
 
   let rafId=null;
-  // visual dim factor (0 = black, 1 = full). Smoothly eased toward target.
   let visDim = 0, visDimTarget = 0;
-  // frozen pendulum state when touch lifted
   let lastPhaseFraction = 0;
 
   function effectiveElapsed(now){
-    // counts only time while touching
     if(touching) return elapsedAccum + (now - lastResumeAt);
     return elapsedAccum;
   }
 
   function draw(now){
     if(!running||ended){ rafId=null; return; }
-    // ease dim toward target
+
+    // ---- adaptive perf monitor ----
+    if(lastFrameTs){
+      const dt = now - lastFrameTs;
+      // ignore huge gaps (tab hidden / touch off)
+      if(dt < 200){
+        frameAvg = frameAvg*0.9 + dt*0.1;
+        if(frameAvg > FT_DEGRADE && quality > 0.25){
+          quality = Math.max(0.25, quality - 0.05);
+          applyDPR();
+        } else if(frameAvg < FT_RECOVER && quality < 1){
+          quality = Math.min(1, quality + 0.01);
+          applyDPR();
+        }
+      }
+    }
+    lastFrameTs = now;
+
     visDim += (visDimTarget - visDim) * 0.18;
     if(visDim < 0.001 && visDimTarget === 0){
       ctx.clearRect(0,0,W,H);
@@ -199,10 +227,12 @@
       ctx.fillStyle = g2;
       ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
 
-      // faint amber ember rim
-      ctx.lineWidth = 1.1;
-      ctx.strokeStyle = `rgba(80,75,70,${0.16*a1})`;
-      ctx.beginPath(); ctx.arc(cx,cy,r*1.06,0,Math.PI*2); ctx.stroke();
+      // faint amber ember rim — skip under load
+      if(quality > 0.6){
+        ctx.lineWidth = 1.1;
+        ctx.strokeStyle = `rgba(80,75,70,${0.16*a1})`;
+        ctx.beginPath(); ctx.arc(cx,cy,r*1.06,0,Math.PI*2); ctx.stroke();
+      }
     }
 
     // ------- Phase 2: Hypnotic pendulum (synced w/ 8D audio) -------
@@ -221,8 +251,8 @@
       const x = cx + Math.sin(ang) * swingRange;
       const y = cy + Math.cos(ang*2) * 6; // tiny vertical bob
 
-      // trail
-      const trailSteps = 8;
+      // trail — count scales with quality (8 → 2)
+      const trailSteps = Math.max(2, Math.round(2 + 6*quality));
       for(let i=trailSteps;i>=1;i--){
         const tf = (phaseFrac - i*0.012 + 1) % 1;
         const a = tf * Math.PI * 2;
@@ -238,12 +268,14 @@
         ctx.beginPath(); ctx.arc(tx,ty,tr*2.2,0,Math.PI*2); ctx.fill();
       }
 
-      // arc guide
-      ctx.lineWidth = 0.7;
-      ctx.strokeStyle = `rgba(60,72,95,${0.10*a2})`;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, swingRange, 14, 0, 0, Math.PI*2);
-      ctx.stroke();
+      // arc guide — drop when quality is low
+      if(quality > 0.5){
+        ctx.lineWidth = 0.7;
+        ctx.strokeStyle = `rgba(60,72,95,${0.10*a2})`;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, swingRange, 14, 0, 0, Math.PI*2);
+        ctx.stroke();
+      }
 
       // pendulum orb
       const orbR = baseR*0.20;
