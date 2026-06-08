@@ -123,8 +123,11 @@
   let thunderTimer=null;
 
   // Session state
-  let sessionStart=0, elapsedAccum=0, lastResumeAt=0;
-  let masterTimer=null, droneTimer=null, tickTimer=null;
+  let sessionStart=0;
+  let audioStartTime=0;       // audioCtx.currentTime at session begin
+  let lastPhaseIdx=-1;
+  let droneFaded=false;
+  let tickTimer=null;
   let running=false, ended=false, touching=false;
 
   // ---------- Canvas ----------
@@ -155,10 +158,12 @@
   let visDim = 0, visDimTarget = 0;
   let lastPhaseFraction = 0;
 
-  function effectiveElapsed(now){
-    if(touching) return elapsedAccum + (now - lastResumeAt);
-    return elapsedAccum;
+  // The ONE timebase the pacer trusts: AudioContext.currentTime.
+  // Frame drops, jank, and setTimeout drift cannot warp this clock.
+  function audioNow(){
+    return audioCtx ? (audioCtx.currentTime - audioStartTime) : 0;
   }
+
 
   function draw(now){
     if(!running||ended){ rafId=null; return; }
